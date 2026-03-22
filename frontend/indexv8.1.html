@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian v8.1 — AI Margin Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script async crossorigin="anonymous" data-clerk-publishable-key="pk_live_Y2xlcmsubWVyaWRpYW52aXN1YWwuaW8k" src="https://clerk.meridianvisual.io/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
+<style>
+:root{
+  --bg:#0d0d0f;--bg1:#111114;--bg2:#16161a;--bg3:#1c1c21;--bg4:#222228;--bg5:#2a2a32;
+  --rule:rgba(255,255,255,.06);--rule2:rgba(255,255,255,.10);--rule3:rgba(255,255,255,.16);
+  --t1:#f0ece4;--t2:#b8b2a8;--t3:#7a7470;--t4:#4a4642;
+  --gold:#e8a838;--gold2:#f5c55a;--gold-dim:rgba(232,168,56,.10);--gold-bg:rgba(232,168,56,.06);
+  --red:#e05040;--red-dim:rgba(224,80,64,.12);--red-bg:rgba(224,80,64,.06);
+  --green:#3cba7a;--green-dim:rgba(60,186,122,.12);--green-bg:rgba(60,186,122,.06);
+  --amber:#e0903c;--amber-dim:rgba(224,144,60,.12);
+  --blue:#5098e8;--blue-dim:rgba(80,152,232,.12);
+  --display:"Playfair Display",Georgia,serif;
+  --mono:"DM Mono","Fira Code",monospace;
+  --sans:"DM Sans",system-ui,sans-serif;
+  --sidebar:220px;--topbar:48px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow:hidden}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px}
+
+/* AUTH */
+#auth-screen{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+#auth-screen.hidden{display:none}
+.auth-wrap{display:grid;grid-template-columns:1fr 360px;width:760px;height:490px;border:1px solid var(--rule3);border-radius:8px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+.auth-left{background:linear-gradient(160deg,var(--bg2) 0%,var(--bg1) 100%);padding:40px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--rule);position:relative;overflow:hidden}
+.auth-left::before{content:"";position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,var(--gold-dim) 0%,transparent 70%);pointer-events:none}
+.auth-logo-name{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.01em;color:var(--t1)}
+.auth-logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-top:3px}
+.auth-stat{border-left:2px solid var(--rule2);padding-left:12px;margin-top:14px}
+.auth-stat-num{font-family:var(--display);font-size:28px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.02em}
+.auth-stat-num.red{color:var(--red)}
+.auth-stat-label{font-size:11px;color:var(--t3);margin-top:2px;font-family:var(--mono)}
+.auth-tagline{font-size:12px;color:var(--t3);line-height:1.6;font-family:var(--mono)}
+.auth-right{background:var(--bg1);padding:36px 32px;display:flex;flex-direction:column}
+.auth-title{font-family:var(--display);font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px;letter-spacing:-.01em}
+.auth-sub{font-size:12px;color:var(--t3);margin-bottom:22px}
+.auth-tabs{display:flex;border-bottom:1px solid var(--rule);margin-bottom:18px}
+.auth-tab{font-size:12px;padding:6px 14px;cursor:pointer;border:none;background:none;color:var(--t3);border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--sans);transition:all .15s}
+.auth-tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.field{margin-bottom:12px}
+.field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.field input{width:100%;padding:8px 10px;background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:13px;color:var(--t1);font-family:var(--sans);outline:none;transition:border-color .15s}
+.field input:focus{border-color:var(--gold)}
+.field input::placeholder{color:var(--t4)}
+.btn-submit{width:100%;padding:10px;background:var(--gold);color:var(--bg);border:none;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:background .15s;margin-top:4px}
+.btn-submit:hover{background:var(--gold2)}
+.auth-error{font-size:11px;color:var(--red);margin-top:8px;font-family:var(--mono)}
+.auth-demo{margin-top:auto;padding-top:14px;border-top:1px solid var(--rule);font-size:11px;color:var(--t4);font-family:var(--mono)}
+.auth-demo span{color:var(--t3);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.auth-demo span:hover{color:var(--gold)}
+
+/* APP SHELL */
+#app{display:flex;height:100vh}
+#app.hidden{display:none}
+#sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg1);border-right:1px solid var(--rule);display:flex;flex-direction:column;overflow:hidden}
+.sb-brand{padding:15px 16px 13px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px}
+.sb-mark{width:28px;height:28px;border-radius:6px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-name{font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:-.01em;line-height:1;color:var(--t1)}
+.sb-sub{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--t4);margin-top:1px}
+.sb-nav{flex:1;padding:6px 0;overflow-y:auto}
+.sb-sec{padding:12px 14px 4px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t4)}
+.nav-item{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;font-size:12px;cursor:pointer;color:var(--t2);border-left:2px solid transparent;transition:all .12s;user-select:none}
+.nav-item:hover{background:var(--bg2);color:var(--t1)}
+.nav-item.on{color:var(--t1);background:var(--bg3);border-left-color:var(--gold);font-weight:500}
+.nb{font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:3px;background:var(--red);color:#fff}
+.nb.amber{background:var(--amber)}
+.nb.green{background:var(--green);color:var(--bg)}
+.nb.hidden{display:none}
+.sb-footer{padding:12px 14px;border-top:1px solid var(--rule)}
+.sb-ws{font-size:12px;font-weight:500;color:var(--t1)}
+.sb-plan{font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:2px}
+.sb-out{font-family:var(--mono);font-size:10px;color:var(--t4);cursor:pointer;margin-top:6px;display:inline-block;transition:color .12s}
+.sb-out:hover{color:var(--red)}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#topbar{height:var(--topbar);border-bottom:1px solid var(--rule);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0;background:var(--bg1)}
+#tb-title{font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:-.01em;color:var(--t1)}
+#tb-sub{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.tb-sep{width:1px;height:16px;background:var(--rule)}
+.tb-sp{flex:1}
+.live-dot-w{display:flex;align-items:center;gap:5px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.live-lbl{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.06em}
+.rbar{display:flex;border:1px solid var(--rule2);border-radius:4px;overflow:hidden}
+.rbtn{font-family:var(--mono);font-size:10px;padding:4px 9px;background:transparent;color:var(--t3);border:none;border-right:1px solid var(--rule);cursor:pointer;transition:all .12s}
+.rbtn:last-child{border-right:none}
+.rbtn.on{background:var(--bg4);color:var(--t1)}
+#body{flex:1;overflow-y:auto;padding:20px 22px 60px;background:var(--bg)}
+.view{display:none}
+.view.on{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* COMPONENTS */
+.loading{display:flex;align-items:center;gap:8px;padding:40px 0;color:var(--t4);font-family:var(--mono);font-size:11px}
+.loading::before{content:"";width:14px;height:14px;border:1.5px solid var(--bg5);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn{font-family:var(--sans);font-size:11px;padding:5px 12px;border-radius:4px;cursor:pointer;border:1px solid var(--rule2);background:var(--bg3);color:var(--t2);font-weight:500;transition:all .12s;white-space:nowrap}
+.btn:hover{background:var(--bg4);color:var(--t1);border-color:var(--rule3)}
+.btn.primary{background:var(--gold);color:var(--bg);border-color:var(--gold);font-weight:600}
+.btn.primary:hover{background:var(--gold2);border-color:var(--gold2)}
+.btn.danger{background:var(--red-dim);color:var(--red);border-color:rgba(224,80,64,.25)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--t3)}
+.btn.ghost:hover{background:var(--bg3);color:var(--t2);border-color:var(--rule)}
+.chip{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:500;padding:2px 6px;border-radius:3px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.chip.loss{background:var(--red-dim);color:var(--red)}
+.chip.thin{background:var(--amber-dim);color:var(--amber)}
+.chip.ok{background:var(--green-dim);color:var(--green)}
+.chip.neu{background:var(--bg4);color:var(--t3)}
+.chip.info{background:var(--blue-dim);color:var(--blue)}
+.chip.gold{background:var(--gold-dim);color:var(--gold)}
+.sec-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;margin-top:22px}
+.sec-hdr:first-child{margin-top:0}
+.sec-title{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
+.hr{height:1px;background:var(--rule);margin:20px 0}
+.fn{font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:6px;line-height:1.5}
+.fn a{color:var(--blue);cursor:pointer}
+/* KPI grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-bottom:18px}
+.kpi-card{background:var(--bg1);padding:14px 16px}
+.kpi-label{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.kpi-num{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--t1)}
+.kpi-num.red{color:var(--red)}.kpi-num.amber{color:var(--amber)}.kpi-num.green{color:var(--green)}.kpi-num.gold{color:var(--gold)}
+.kpi-delta{font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:5px}
+.kpi-delta.bad{color:var(--red)}.kpi-delta.good{color:var(--green)}.kpi-delta.gold{color:var(--gold)}
+/* Attr badge */
+.ab{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:3px;cursor:help}
+.ab.v{background:var(--green-bg);color:var(--green);border:1px solid rgba(60,186,122,.2)}
+.ab.e{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(224,144,60,.25)}
+.ab.m{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(80,152,232,.2)}
+/* Tables */
+table{width:100%;border-collapse:collapse;font-size:12px}
+.tw{border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-bottom:4px}
+thead th{background:var(--bg2);text-align:left;padding:8px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);font-weight:400;border-bottom:1px solid var(--rule);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--t1)}
+tbody tr{border-bottom:1px solid var(--rule);transition:background .08s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--bg2)}
+tbody td{padding:9px 12px;vertical-align:middle;color:var(--t2)}
+.tn{color:var(--t1);font-weight:500}.tm{font-family:var(--mono);color:var(--t2)}
+.tr{font-family:var(--mono);color:var(--red);font-weight:600}
+.ta{font-family:var(--mono);color:var(--amber)}
+.tg{font-family:var(--mono);color:var(--green);font-weight:600}
+.tgo{font-family:var(--mono);color:var(--gold)}
+.td{font-family:var(--mono);color:var(--t4)}
+/* Margin bar */
+.mbar-row{display:flex;align-items:center;gap:7px}
+.mbar{width:48px;height:3px;background:var(--bg5);border-radius:2px;flex-shrink:0;overflow:hidden}
+.mbar-fill{height:100%;border-radius:2px;transition:width .3s}
+/* Banner */
+.banner{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:6px;margin-bottom:14px;font-size:12px;line-height:1.6;border:1px solid}
+.banner-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.banner.loss{background:var(--red-bg);border-color:rgba(224,80,64,.2);color:var(--t2)}
+.banner.warn{background:var(--amber-dim);border-color:rgba(224,144,60,.2);color:var(--t2)}
+.banner.ok{background:var(--green-bg);border-color:rgba(60,186,122,.2);color:var(--t2)}
+.banner.info{background:var(--blue-dim);border-color:rgba(80,152,232,.2);color:var(--t2)}
+.banner.gold{background:var(--gold-bg);border-color:rgba(232,168,56,.2);color:var(--t2)}
+.banner strong{color:var(--t1)}
+/* Progress */
+.pw{height:4px;background:var(--bg5);border-radius:2px;overflow:hidden;margin:6px 0}
+.pf{height:100%;border-radius:2px;transition:width .4s}
+/* Toggle */
+.toggle{width:30px;height:17px;border-radius:9px;background:var(--bg5);border:1px solid var(--rule2);cursor:pointer;position:relative;flex-shrink:0;transition:background .15s,border-color .15s}
+.toggle.on{background:var(--gold);border-color:var(--gold)}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--t4);transition:transform .15s,background .15s}
+.toggle.on::after{transform:translateX(13px);background:var(--bg)}
+.rr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.rr:last-child{border-bottom:none}
+.rr-text{flex:1}
+.rr-name{font-size:12px;color:var(--t1);font-weight:500}
+.rr-desc{font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:1px}
+/* Budget cards */
+.bc{border:1px solid var(--rule);border-left:3px solid var(--rule);border-radius:6px;padding:14px 16px;margin-bottom:8px;background:var(--bg1)}
+.bc.breach{border-left-color:var(--red)}.bc.warn{border-left-color:var(--amber)}.bc.ok{border-left-color:var(--green)}
+.bc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.bc-name{font-size:13px;font-weight:500;color:var(--t1)}
+.bc-scope{font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:2px}
+.bc-meta{display:flex;gap:16px;font-family:var(--mono);font-size:11px;color:var(--t3);flex-wrap:wrap;margin-top:6px}
+/* Code */
+.code{background:var(--bg2);border:1px solid var(--rule2);border-radius:5px;padding:14px 16px;font-family:var(--mono);font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre;color:var(--t2);margin:10px 0}
+.cm{color:var(--t4)}.cs{color:var(--green)}.ck{color:var(--gold)}.cv{color:var(--blue)}.hi{background:rgba(232,168,56,.12);border-radius:2px;padding:0 3px}
+/* Providers */
+.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pc{background:var(--bg2);border:1px solid var(--rule);border-radius:5px;padding:12px 14px;cursor:pointer;transition:all .15s}
+.pc:hover{border-color:var(--rule3);background:var(--bg3)}
+.pc.connected{border-color:rgba(60,186,122,.35);background:var(--green-bg)}
+.pcs{font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:3px}
+.pcs.add{color:var(--t4)}.pcs.connected{color:var(--green)}
+.pcn{font-size:12px;font-weight:500;color:var(--t1)}
+/* Setup steps */
+.ss{display:flex;gap:16px;border:1px solid var(--rule);border-radius:6px;padding:16px 18px;margin-bottom:10px;background:var(--bg1)}
+.ss-num{font-family:var(--display);font-size:22px;font-weight:400;color:var(--t4);min-width:24px;line-height:1.2}
+.ss-body{flex:1}
+.ss-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px}
+.ss-desc{font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:10px}
+/* Simulator */
+.sim-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.sst{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--t4);margin-bottom:8px}
+.sf{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg2);border-radius:3px;margin-bottom:3px;border:1px solid var(--rule)}
+.sf-l{font-size:11px;color:var(--t3)}
+.sf-v{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--t1)}
+.sf-v input{font-family:var(--mono);font-size:12px;font-weight:500;width:68px;text-align:right;background:var(--bg3);border:1px solid var(--rule2);border-radius:3px;padding:2px 5px;color:var(--t1);outline:none}
+.sf-v input:focus{border-color:var(--gold)}
+.srg{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:5px;overflow:hidden;margin-bottom:14px}
+.sr{background:var(--bg2);padding:12px 14px}
+.sr-l{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);margin-bottom:5px}
+.sr-v{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.03em;color:var(--t1)}
+.sr-v.g{color:var(--green)}.sr-v.r{color:var(--red)}.sr-v.go{color:var(--gold)}
+.sim-reason{background:var(--bg2);border:1px solid var(--rule2);border-left:3px solid var(--gold);border-radius:0 5px 5px 0;padding:12px 14px;font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.7;margin-bottom:14px}
+.sim-reason strong{color:var(--gold)}
+.scen{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sc{background:var(--bg2);border:1px solid var(--rule);border-radius:5px;padding:12px 14px;cursor:pointer;transition:all .12s}
+.sc:hover{border-color:var(--rule3)}
+.sc.on{border-color:var(--gold);border-width:2px}
+.sc-name{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:3px}
+.sc-desc{font-family:var(--mono);font-size:10px;color:var(--t3);line-height:1.5;margin-bottom:5px}
+.sc-res{font-family:var(--mono);font-size:11px;font-weight:600}
+/* Empty states */
+.es{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 32px;text-align:center;border:1px dashed var(--rule2);border-radius:8px;background:var(--bg1)}
+.es-icon{width:44px;height:44px;border-radius:12px;background:var(--gold-bg);border:1px solid rgba(232,168,56,.2);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.es-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:6px}
+.es-desc{font-family:var(--mono);font-size:11px;color:var(--t3);line-height:1.6;max-width:280px;margin-bottom:16px}
+/* Digest */
+.de{max-width:360px;border:1px solid var(--rule2);border-radius:6px;overflow:hidden;background:var(--bg1)}
+.dh{background:var(--bg2);padding:12px 16px;border-bottom:1px solid var(--rule)}
+.df{font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:2px}
+.ds{font-size:13px;font-weight:500;color:var(--t1)}
+.db{padding:18px 16px}
+.dn{font-family:var(--display);font-size:48px;font-weight:900;letter-spacing:-.04em;line-height:1;margin-bottom:4px}
+.dnl{font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:14px}
+.dr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--rule);font-size:12px}
+.dr:last-child{border-bottom:none}
+.drk{color:var(--t3)}.drv{font-family:var(--mono);font-weight:500;color:var(--t1)}
+.dft{padding:10px 16px;background:var(--bg2);border-top:1px solid var(--rule);font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4)}
+/* Investor report */
+.rh{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 20px;border-bottom:1px solid var(--rule);background:var(--bg2)}
+.rl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--t4);margin-bottom:4px}
+.rhn{font-family:var(--display);font-size:36px;font-weight:900;letter-spacing:-.03em;line-height:1}
+.rhs{font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:3px}
+.rkr{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border-bottom:1px solid var(--rule)}
+.rk{background:var(--bg1);padding:12px 14px}
+.rkl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);margin-bottom:4px}
+.rkv{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.02em;color:var(--t1)}
+.rks{font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:2px}
+.rb{padding:18px 20px}
+.trend-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.trend-lbl{font-family:var(--mono);font-size:11px;color:var(--t3);width:130px;flex-shrink:0}
+.trend-bar{flex:1;height:4px;background:var(--bg5);border-radius:2px;overflow:hidden}
+.trend-fill{height:100%;border-radius:2px;transition:width .5s}
+.trend-val{font-family:var(--mono);font-size:11px;font-weight:600;width:46px;text-align:right;flex-shrink:0}
+.narr{background:var(--bg2);border:1px solid var(--rule);border-radius:5px;padding:14px 16px;font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.7;font-style:italic}
+/* Modal */
+#_modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.mbox{background:var(--bg2);border:1px solid var(--rule3);border-radius:8px;width:460px;max-height:80vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.5);animation:min .15s ease}
+@keyframes min{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.mhdr{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--rule)}
+.mtitle{font-size:14px;font-weight:600;color:var(--t1)}
+.mclose{background:none;border:none;color:var(--t3);font-size:18px;cursor:pointer;line-height:1;padding:0}
+.mclose:hover{color:var(--t1)}
+.mbody{padding:18px 18px 12px}
+.mftr{padding:10px 18px 16px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--rule);margin-top:4px}
+.mf{margin-bottom:12px}
+.mf label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.mf input,.mf select,.mf textarea{width:100%;padding:8px 10px;background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:12px;color:var(--t1);font-family:var(--sans);outline:none}
+.mf input:focus,.mf select:focus{border-color:var(--gold)}
+.mf select option{background:var(--bg3)}
+/* Error */
+#err-b{display:none;position:fixed;bottom:16px;right:16px;background:var(--red-dim);border:1px solid rgba(224,80,64,.35);border-radius:5px;padding:10px 14px;font-family:var(--mono);font-size:11px;color:var(--red);max-width:320px;z-index:999;animation:su .2s ease}
+@keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+select{background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:11px;padding:4px 8px;color:var(--t2);font-family:var(--sans);outline:none;cursor:pointer}
+select:focus{border-color:var(--gold)}
+select option{background:var(--bg3)}
+</style>
+</head>
+<body>
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-wrap">
+    <div class="auth-left">
+      <div><div class="auth-logo-name">Meridian</div><div class="auth-logo-sub">AI Margin Intelligence</div></div>
+      <div>
+        <div class="auth-stat"><div class="auth-stat-num red">−$2,400</div><div class="auth-stat-label">avg monthly margin leak before Meridian</div></div>
+        <div class="auth-stat"><div class="auth-stat-num">11</div><div class="auth-stat-label">users costing more than they pay</div></div>
+        <div class="auth-stat"><div class="auth-stat-num">34.1%</div><div class="auth-stat-label">industry average AI gross margin</div></div>
+      </div>
+      <div class="auth-tagline">The financial layer for AI products. Connects your Anthropic bill to your Stripe revenue — shows which users and features are profitable, and what to charge next.</div>
+    </div>
+    <div class="auth-right" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div id="clerk-sign-in"></div>
+      <div style="text-align:center;margin-top:10px">
+        <span onclick="showResetModal()" style="font-size:11px;color:var(--t3);cursor:pointer;text-decoration:underline;text-underline-offset:2px;font-family:var(--mono)">Forgot password?</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <aside id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-mark"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 10L7 3L12 10" stroke="#0d0d0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="3" r="1" fill="#0d0d0f"/></svg></div>
+      <div><div class="sb-name">Meridian</div><div class="sb-sub">Margin OS</div></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Overview</div>
+      <div class="nav-item on" data-v="signal">Margin Signal <span class="nb hidden" id="nb-a">0</span></div>
+      <div class="sb-sec">Revenue</div>
+      <div class="nav-item" data-v="customers">Users &amp; Profitability <span class="nb hidden" id="nb-c">0</span></div>
+      <div class="nav-item" data-v="pricing">Pricing Simulator</div>
+      <div class="sb-sec">Cost Architecture</div>
+      <div class="nav-item" data-v="features">Feature Margins</div>
+      <div class="nav-item" data-v="spend">Cost Breakdown</div>
+      <div class="sb-sec">Reports</div>
+      <div class="nav-item" data-v="digest">Weekly Digest</div>
+      <div class="nav-item" data-v="investor">Investor Report <span class="nb green">NEW</span></div>
+      <div class="sb-sec">Controls</div>
+      <div class="nav-item" data-v="controls">Spend Caps &amp; Rules <span class="nb amber hidden" id="nb-b">0</span></div>
+      <div class="nav-item" data-v="connect">Connect Data Sources</div>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-ws" id="ws-name">Loading…</div>
+      <div id="demo-badge" style="display:none;align-items:center;gap:5px;margin-top:4px;font-family:var(--mono);font-size:9px;color:var(--amber);background:var(--amber-dim);padding:3px 7px;border-radius:3px;letter-spacing:.06em">⚡ DEMO — <span onclick="document.getElementById('auth-screen').style.cssText=''" style="cursor:pointer;text-decoration:underline">sign in</span></div>
+      <div class="sb-plan">Pro · $149/mo</div>
+      <div class="sb-out" onclick="logout()">Sign out</div>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div id="topbar">
+      <div id="tb-title">Signal</div>
+      <div class="tb-sep"></div>
+      <div id="tb-sub">Is your AI profitable right now?</div>
+      <div class="tb-sp"></div>
+      <div class="live-dot-w"><div class="live-dot"></div><span class="live-lbl">LIVE</span></div>
+      <div class="rbar">
+        <button class="rbtn" data-r="1d">1D</button>
+        <button class="rbtn on" data-r="7d">7D</button>
+        <button class="rbtn" data-r="30d">30D</button>
+        <button class="rbtn" data-r="90d">90D</button>
+      </div>
+    </div>
+    <div id="body">
+
+<!-- SIGNAL -->
+<div class="view on" id="v-signal">
+  <div id="sl" class="loading">Loading margin data</div>
+  <div id="sc" style="display:none">
+    <div id="sig-banner"></div>
+    <div class="kpi-grid" id="sig-kpis"></div>
+    <div class="sec-hdr"><div class="sec-title">Ranked actions — ranked by monthly dollar impact</div><div id="rec-pill" style="font-family:var(--mono);font-size:11px;color:var(--green)"></div></div>
+    <div id="sig-actions"></div>
+  </div>
+  <div id="sig-empty" style="display:none">
+    <div class="banner warn" style="margin-bottom:20px">
+      <span class="banner-icon">◎</span>
+      <div><strong>No live data yet.</strong> Enter your numbers below for an instant estimate — real tracking starts once you connect Stripe and install the SDK.</div>
+    </div>
+
+    <!-- QUICK ESTIMATE CALCULATOR -->
+    <div style="background:var(--bg1);border:1px solid var(--rule2);border-radius:8px;padding:24px;max-width:680px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:18px">Quick margin estimate — 60 seconds, no setup</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+        <div>
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Your plan price ($/mo)</label>
+          <input id="qe-price" type="number" value="18" min="1" oninput="calcEstimate()"
+            style="width:100%;padding:9px 10px;background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:14px;color:var(--t1);font-family:var(--mono);outline:none">
+        </div>
+        <div>
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Active paying users</label>
+          <input id="qe-users" type="number" value="50" min="1" oninput="calcEstimate()"
+            style="width:100%;padding:9px 10px;background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:14px;color:var(--t1);font-family:var(--mono);outline:none">
+        </div>
+        <div>
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">LLM calls / user / day (avg)</label>
+          <input id="qe-calls" type="number" value="8" min="1" oninput="calcEstimate()"
+            style="width:100%;padding:9px 10px;background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:14px;color:var(--t1);font-family:var(--mono);outline:none">
+        </div>
+        <div>
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Tokens per call (avg)</label>
+          <input id="qe-tokens" type="number" value="2000" min="100" step="100" oninput="calcEstimate()"
+            style="width:100%;padding:9px 10px;background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:14px;color:var(--t1);font-family:var(--mono);outline:none">
+        </div>
+        <div>
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Primary model</label>
+          <select id="qe-model" onchange="calcEstimate()"
+            style="width:100%;padding:9px 10px;background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:13px;color:var(--t1);font-family:var(--mono);outline:none">
+            <option value="0.003">claude-sonnet-4 ($0.003/1K in)</option>
+            <option value="0.015">claude-opus-4 ($0.015/1K in)</option>
+            <option value="0.00025">claude-haiku-4 ($0.00025/1K in)</option>
+            <option value="0.0025">gpt-4o ($0.0025/1K in)</option>
+            <option value="0.00015">gpt-4o-mini ($0.00015/1K in)</option>
+            <option value="0.000075">gemini-2.0-flash ($0.000075/1K in)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Heavy user multiplier (top 20%)</label>
+          <select id="qe-mult" onchange="calcEstimate()"
+            style="width:100%;padding:9px 10px;background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:13px;color:var(--t1);font-family:var(--mono);outline:none">
+            <option value="2">2× avg (typical)</option>
+            <option value="3">3× avg (power users)</option>
+            <option value="4">4× avg (high variability)</option>
+            <option value="1.5">1.5× avg (tight product)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ESTIMATE OUTPUT -->
+      <div id="qe-result" style="background:var(--bg);border:1px solid var(--rule2);border-radius:6px;padding:18px">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--rule);padding-bottom:14px;margin-bottom:14px">
+          <div style="text-align:center;border-right:1px solid var(--rule);padding:0 12px">
+            <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:6px">Est. AI cost/mo</div>
+            <div id="qe-cost" style="font-family:'Playfair Display',serif;font-size:24px;color:var(--red)">$—</div>
+          </div>
+          <div style="text-align:center;border-right:1px solid var(--rule);padding:0 12px">
+            <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:6px">Revenue/mo</div>
+            <div id="qe-rev" style="font-family:'Playfair Display',serif;font-size:24px;color:var(--t1)">$—</div>
+          </div>
+          <div style="text-align:center;border-right:1px solid var(--rule);padding:0 12px">
+            <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:6px">Est. margin</div>
+            <div id="qe-margin" style="font-family:'Playfair Display',serif;font-size:24px">—%</div>
+          </div>
+          <div style="text-align:center;padding:0 12px">
+            <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:6px">Loss users (est.)</div>
+            <div id="qe-loss" style="font-family:'Playfair Display',serif;font-size:24px;color:var(--red)">—</div>
+          </div>
+        </div>
+        <div id="qe-verdict" style="font-family:var(--mono);font-size:12px;color:var(--t3);line-height:1.7"></div>
+      </div>
+
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn primary" onclick="switchView('connect')">Connect real data →</button>
+        <button class="btn" onclick="switchView('pricing')">Open Pricing Simulator</button>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:10px">This is a rough estimate. Real margins require actual transaction data — connect Stripe and install the SDK for accurate numbers.</div>
+    </div>
+  </div>
+</div>
+
+<!-- USERS & REVENUE -->
+<div class="view" id="v-customers">
+  <div id="cust-aw" class="banner warn" style="display:none"><span class="banner-icon">⚠</span><div><strong>Revenue figures are estimated — not verified.</strong> Margin numbers shown here are calculated from approximate revenue allocation, not from verified billing data. Connect Stripe to pull real subscription prices per user. Until then, amber values are estimates and should not be used for board-level reporting. <span style="color:var(--gold);cursor:pointer;text-decoration:underline" onclick="switchView('connect')">Connect Stripe →</span></div></div>
+  <div id="cust-lb" class="banner loss" style="display:none"></div>
+  <div style="display:flex;gap:7px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
+    <button class="btn primary" onclick="fc('all')">All</button>
+    <button class="btn" onclick="fc('loss')">Losing money</button>
+    <button class="btn" onclick="fc('thin')">Thin margin</button>
+    <button class="btn" onclick="fc('ok')">Profitable</button>
+    <div style="flex:1"></div>
+    <select id="cs" onchange="loadCustomers()"><option value="cost">AI Cost ↓</option><option value="gap">Gap ↓</option><option value="margin">Margin ↑</option></select>
+    <button class="btn" onclick="exportCsv()">Export CSV</button>
+  </div>
+  <div id="cll" class="loading">Loading user data</div>
+  <div id="cc" style="display:none">
+    <div class="tw"><table>
+      <thead><tr><th>User</th><th>Plan</th><th title="Total AI cost this period">AI Cost</th><th title="Monthly subscription revenue" id="rev-th">Revenue</th><th title="Revenue minus AI cost">Gap</th><th>Margin</th><th>Sessions</th><th title="Avg tokens/session — high = cost driver">Avg Tok</th><th>Status</th></tr></thead>
+      <tbody id="ctbody"></tbody>
+    </table></div>
+    <div class="fn">Up to 50 users by AI cost. <a onclick="exportCsv()">Export all →</a></div>
+  </div>
+  <div id="c-empty" class="es" style="display:none"><div class="es-icon">👤</div><div class="es-title">No users yet</div><div class="es-desc">Connect Stripe to import customers automatically, or upload a CSV.</div><div style="display:flex;gap:8px"><button class="btn primary" onclick="switchView('connect')">Connect Stripe</button><button class="btn" onclick="showManualCsv()">Import CSV</button></div></div>
+</div>
+
+<!-- PRICING SIM -->
+<div class="view" id="v-pricing">
+  <div class="banner gold" style="margin-bottom:16px"><span class="banner-icon">$</span><div><strong>Pricing Simulator.</strong> Every input is pulled from your actual usage data. The reasoning section shows exactly why each output — minimum viable price, churn-adjusted MRR, margin at each scenario. You should be able to defend any number here to your co-founder, your board, or your users.</div></div>
+  <div class="sim-grid">
+    <div>
+      <div class="sst">Your actual cost structure</div>
+      <div class="sf"><span class="sf-l">Avg AI cost / user / mo</span><span class="sf-v tr" id="sim-ac">—</span></div>
+      <div class="sf"><span class="sf-l">Heavy user AI cost (top 20%)</span><span class="sf-v tr" id="sim-hc">—</span></div>
+      <div class="sf"><span class="sf-l">Light user AI cost (bottom 50%)</span><span class="sf-v tg" id="sim-lc">—</span></div>
+      <div class="sf"><span class="sf-l">Total AI cost this month</span><span class="sf-v" id="sim-tc">—</span></div>
+    </div>
+    <div>
+      <div class="sst">Adjust your pricing</div>
+      <div class="sf"><span class="sf-l">Pro plan price</span><span class="sf-v">$<input type="number" id="sp-pro" value="18" min="1" oninput="runSim()"> /mo</span></div>
+      <div class="sf"><span class="sf-l">Growth plan price</span><span class="sf-v">$<input type="number" id="sp-gr" value="49" min="1" oninput="runSim()"> /mo</span></div>
+      <div class="sf"><span class="sf-l">Pro user count</span><span class="sf-v"><input type="number" id="sp-n" value="214" min="0" oninput="runSim()"></span></div>
+      <div class="sf"><span class="sf-l">Token cap (0 = none)</span><span class="sf-v"><input type="number" id="sp-cap" value="0" min="0" oninput="runSim()">K</span></div>
+    </div>
+    <div>
+      <div class="sst">Overage pricing</div>
+      <div class="sf"><span class="sf-l">Overage rate</span><span class="sf-v">$<input type="number" id="sp-ov" value="0" min="0" step="0.001" oninput="runSim()"> /1K tok</span></div>
+      <div class="sf"><span class="sf-l">Included tokens / mo</span><span class="sf-v"><input type="number" id="sp-fr" value="50" min="0" oninput="runSim()">K</span></div>
+      <div class="sf"><span class="sf-l">Estimated churn</span><span class="sf-v"><input type="number" id="sp-ch" value="5" min="0" max="100" oninput="runSim()">%</span></div>
+    </div>
+  </div>
+  <div class="srg">
+    <div class="sr"><div class="sr-l">New AI Margin</div><div class="sr-v" id="sr-m">—</div></div>
+    <div class="sr"><div class="sr-l">Recovery / mo</div><div class="sr-v" id="sr-r" style="color:var(--t3)">—</div></div>
+    <div class="sr"><div class="sr-l">New MRR</div><div class="sr-v" id="sr-mrr">—</div></div>
+    <div class="sr"><div class="sr-l">AI Cost Exposure</div><div class="sr-v r" id="sr-c">—</div></div>
+    <div class="sr"><div class="sr-l">Churned Users</div><div class="sr-v" id="sr-ch">—</div></div>
+  </div>
+  <div class="sim-reason" id="sim-rsn" style="display:none"></div>
+  <div class="sec-hdr"><div class="sec-title">Scenarios</div></div>
+  <div class="scen">
+    <div class="sc on" id="sc-0" onclick="applyScen(0)"><div class="sc-name">Current (baseline)</div><div class="sc-desc">Your pricing as-is. No caps or overages.</div><div class="sc-res" id="sc-0r" style="color:var(--t3)">—</div></div>
+    <div class="sc" id="sc-1" onclick="applyScen(1)"><div class="sc-name">Raise + cap usage</div><div class="sc-desc">Pro → $29 · Cap 100K tok/mo</div><div class="sc-res" style="color:var(--green)">Est. +$3,800/mo</div></div>
+    <div class="sc" id="sc-2" onclick="applyScen(2)"><div class="sc-name">Add overages</div><div class="sc-desc">Keep price · $0.002/1K tok after 50K</div><div class="sc-res" style="color:var(--green)">Est. +$2,900/mo</div></div>
+    <div class="sc" id="sc-3" onclick="applyScen(3)"><div class="sc-name">Tier split</div><div class="sc-desc">Pro $18 (50K cap) · Power $49 (∞)</div><div class="sc-res" style="color:var(--green)">Est. +$4,600/mo</div></div>
+  </div>
+</div>
+
+<!-- FEATURE MARGINS -->
+<div class="view" id="v-features">
+  <div id="fl" class="loading">Loading feature margins</div>
+  <div id="fcon" style="display:none">
+    <div class="kpi-grid" id="fkpis"></div>
+    <div class="tw"><table>
+      <thead><tr><th>Feature</th><th>AI Cost</th><th>Revenue <span id="frl"></span></th><th>Gross Margin</th><th>Cost / Request</th><th>Requests</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="ftbody"></tbody>
+    </table></div>
+    <div class="hr"></div>
+    <div class="sec-hdr"><div class="sec-title">What healthy AI gross margin looks like</div></div>
+    <div class="tw"><table>
+      <thead><tr><th>Metric</th><th>Losing money</th><th>Thin (0–40%)</th><th>Healthy (&gt;40%)</th><th>Your blended avg</th></tr></thead>
+      <tbody>
+        <tr><td class="tn">Gross margin</td><td class="tr">&lt; 0%</td><td class="ta">0–40%</td><td class="tg">&gt;40%</td><td id="f-avg" class="ta">—</td></tr>
+        <tr><td class="tn">Cost per request</td><td class="tr">&gt;$0.05</td><td class="ta">$0.01–$0.05</td><td class="tg">&lt;$0.01</td><td class="td">—</td></tr>
+        <tr><td class="tn">Revenue / AI cost</td><td class="tr">&lt;1.0×</td><td class="ta">1.0–2.5×</td><td class="tg">&gt;2.5×</td><td class="td">—</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div id="f-empty" class="es" style="display:none"><div class="es-icon">◈</div><div class="es-title">No features defined</div><div class="es-desc">Pass <code style="background:var(--bg3);padding:1px 4px;border-radius:2px;font-family:var(--mono)">feature="slug"</code> in each SDK call to see per-feature margins.</div><button class="btn primary" onclick="switchView('connect')">See SDK setup →</button></div>
+</div>
+
+<!-- COST BREAKDOWN -->
+<div class="view" id="v-spend">
+  <div style="display:flex;gap:0;border-bottom:1px solid var(--rule);margin-bottom:14px">
+    <button class="btn ghost" id="st-m" onclick="switchSpend('models')" style="border-radius:0;border-bottom:2px solid var(--gold);color:var(--t1);font-weight:600">By Model</button>
+    <button class="btn ghost" id="st-l" onclick="switchSpend('ledger')">Ledger</button>
+    <button class="btn ghost" id="st-a" onclick="switchSpend('anomalies')">Cost Anomalies</button>
+  </div>
+  <div id="sp-models">
+    <div id="ml" class="loading">Loading model costs</div>
+    <div id="msum" style="display:none"></div>
+    <div class="tw" id="mtw" style="display:none"><table>
+      <thead><tr><th>Model</th><th>Input Tok</th><th>Output Tok</th><th title="Tokens from cache — should be high">Cached Tok</th><th>Total Cost</th><th>% of Budget</th><th>$/1K Tok</th><th>Caching</th></tr></thead>
+      <tbody id="mtbody"></tbody>
+    </table></div>
+  </div>
+  <div id="sp-ledger" style="display:none">
+    <div id="ll" class="loading">Loading ledger</div>
+    <div class="tw" id="ltw" style="display:none"><table>
+      <thead><tr><th>Time</th><th>Description</th><th>Type</th><th>Model</th><th>Tokens</th><th style="text-align:right">Amount</th><th style="text-align:right">Balance</th></tr></thead>
+      <tbody id="ltbody"></tbody>
+    </table></div>
+    <div class="fn" id="lfn" style="display:none">50 most recent. <a>Export →</a></div>
+    <div id="l-empty" class="es" style="display:none"><div class="es-icon">▦</div><div class="es-title">No transactions yet</div><div class="es-desc">The ledger populates once SDK calls start flowing.</div><button class="btn primary" onclick="switchView('connect')">Install SDK →</button></div>
+  </div>
+  <div id="sp-anomalies" style="display:none">
+    <div id="al" class="loading">Analysing cost patterns</div>
+    <div id="acon"></div>
+  </div>
+</div>
+
+<!-- WEEKLY DIGEST -->
+<div class="view" id="v-digest">
+  <div class="banner gold" style="margin-bottom:16px"><span class="banner-icon">✉</span><div><strong>Monday 8am, every week.</strong> One email. Your margin delta vs last week. Three actions ranked by dollar impact. It delivers new information — not a summary of what you already know. The first Monday email a founder opens before standup.</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+    <div>
+      <div class="sec-hdr"><div class="sec-title">This week's preview</div></div>
+      <div class="de">
+        <div class="dh"><div class="df">FROM: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="22554747494e5b624f47504b464b434c0c434b">[email&#160;protected]</a> · Monday 8:00 AM</div><div class="ds">AI margin this week: <span id="d-ms" style="color:var(--amber)">—</span></div></div>
+        <div class="db">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:12px">Your weekly AI economics report —</div>
+          <div class="dn" id="d-num" style="color:var(--amber)">—</div>
+          <div class="dnl">AI gross margin this week</div>
+          <div style="border:1px solid var(--rule);border-radius:4px;overflow:hidden;margin-bottom:12px">
+            <div class="dr"><span class="drk">Industry average</span><span class="drv" style="color:var(--t3)">34.1%</span></div>
+            <div class="dr"><span class="drk">Week-over-week</span><span class="drv" id="d-wow" style="color:var(--red)">—</span></div>
+            <div class="dr"><span class="drk">Wallet runway</span><span class="drv" id="d-rw" style="color:var(--amber)">—</span></div>
+            <div class="dr"><span class="drk">Users over plan</span><span class="drv" id="d-op" style="color:var(--red)">—</span></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--t3);padding:10px;background:var(--bg3);border-radius:4px;line-height:1.6" id="d-act">Loading…</div>
+        </div>
+        <div class="dft">Meridian · View full dashboard →</div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-hdr"><div class="sec-title">Notifications</div></div>
+      <div style="background:var(--bg1);border:1px solid var(--rule);border-radius:6px;padding:2px 14px">
+        <div class="rr"><div class="toggle on" onclick="this.classList.toggle('on')"></div><div class="rr-text"><div class="rr-name">Weekly margin digest</div><div class="rr-desc">Monday 8am · margin + 3 actions</div></div></div>
+        <div class="rr"><div class="toggle on" onclick="this.classList.toggle('on')"></div><div class="rr-text"><div class="rr-name">User threshold alerts</div><div class="rr-desc">When a user crosses into loss territory</div></div></div>
+        <div class="rr"><div class="toggle on" onclick="this.classList.toggle('on')"></div><div class="rr-text"><div class="rr-name">Budget breach — immediate</div><div class="rr-desc">Instant when cap exceeded</div></div></div>
+        <div class="rr"><div class="toggle" onclick="this.classList.toggle('on')"></div><div class="rr-text"><div class="rr-name">Cost spike alert</div><div class="rr-desc">When daily cost exceeds 3× 7-day average</div></div></div>
+        <div class="rr"><div class="toggle" onclick="this.classList.toggle('on')"></div><div class="rr-text"><div class="rr-name">Pricing sim auto-update</div><div class="rr-desc">When cost structure shifts, sim recalculates</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INVESTOR REPORT -->
+<div class="view" id="v-investor">
+  <div class="banner info" style="margin-bottom:14px"><span class="banner-icon">📋</span><div><strong>One-click board report.</strong> Investor asking about AI unit economics? This is your answer. Every number is traceable to its source — Stripe for revenue, Anthropic for cost, Meridian's benchmark dataset for industry context. Export as PDF to drop into your deck without explanation.</div></div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px"><button class="btn primary" onclick="exportReport()">Export PDF</button><button class="btn">Copy link</button></div>
+  <div style="background:var(--bg1);border:1px solid var(--rule);border-radius:8px;overflow:hidden">
+    <div class="rh">
+      <div><div class="rl">AI Unit Economics Report</div><div style="font-size:14px;font-weight:600;color:var(--t1)" id="r-ws">—</div><div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:2px" id="r-per">—</div></div>
+      <div style="text-align:right"><div class="rhn" id="r-mh" style="color:var(--amber)">—</div><div class="rhs">AI Gross Margin</div><div style="margin-top:6px" id="r-vs"></div></div>
+    </div>
+    <div class="rkr" id="r-kpis"></div>
+    <div class="rb">
+      <div class="sec-hdr" style="margin-top:0"><div class="sec-title">Feature profitability</div></div>
+      <div id="r-bars" style="margin-bottom:16px"></div>
+      <div class="hr"></div>
+      <div class="sec-hdr"><div class="sec-title">Narrative</div></div>
+      <div class="narr" id="r-narr">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="view" id="v-controls">
+  <div class="sec-hdr" style="margin-top:0"><div class="sec-title">Spend caps — enforce budget before it's too late</div><button class="btn" onclick="showAddBudget()">+ New cap</button></div>
+  <div id="bll" class="loading">Loading caps</div>
+  <div id="blist"></div>
+  <div class="hr"></div>
+  <div class="sec-hdr"><div class="sec-title">Model routing rules — protect margin automatically</div><button class="btn" onclick="showAddRule()">+ Add rule</button></div>
+  <div class="fn" style="margin-bottom:10px">Rules fire before every API call. First match wins. Use to route cheap requests to cheaper models — each rule is a margin protection policy, not just a technical switch.</div>
+  <div id="rll" class="loading">Loading rules</div>
+  <div class="tw" id="rtw" style="display:none"><table>
+    <thead><tr><th>Active</th><th>Name</th><th>Trigger</th><th>Action</th><th>Fires</th><th></th></tr></thead>
+    <tbody id="rtbody"></tbody>
+  </table></div>
+  <div id="r-empty" class="es" style="display:none"><div class="es-icon">⇄</div><div class="es-title">No routing rules</div><div class="es-desc">Rules automatically switch to cheaper models when conditions are met — like when a user exceeds their plan cost.</div><button class="btn primary" onclick="showAddRule()">Add first rule →</button></div>
+  <div class="hr"></div>
+  <div class="sec-hdr"><div class="sec-title">Wallet</div></div>
+  <div id="wll" class="loading">Loading wallet</div>
+  <div id="wcon" style="display:none">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+      <div style="background:var(--bg2);border:1px solid var(--rule);border-radius:6px;padding:14px"><div class="sst">Balance</div><div style="font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--t1)" id="w-bal">$0.00</div></div>
+      <div style="background:var(--bg2);border:1px solid var(--rule);border-radius:6px;padding:14px"><div class="sst">Total Spent</div><div style="font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--t2)" id="w-sp">$0.00</div></div>
+      <div style="background:var(--bg2);border:1px solid var(--rule);border-radius:6px;padding:14px"><div class="sst">Total Deposited</div><div style="font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--t2)" id="w-dep">$0.00</div></div>
+    </div>
+    <div style="background:var(--bg1);border:1px solid var(--rule);border-radius:6px;padding:2px 14px;margin-bottom:12px">
+      <div class="rr"><div class="toggle" id="w-rt" onclick="toggleW('auto_refill_enabled',this)"></div><div class="rr-text"><div class="rr-name">Auto-refill wallet</div><div class="rr-desc" id="w-rd">Off</div></div><span class="chip" id="w-rc">OFF</span></div>
+      <div class="rr"><div class="toggle" id="w-ft" onclick="toggleW('freeze_at_zero',this)"></div><div class="rr-text"><div class="rr-name">Hard freeze at $0 balance</div><div class="rr-desc">Returns HTTP 402 — no silent overage</div></div><span class="chip" id="w-fc">OFF</span></div>
+    </div>
+    <div style="display:flex;gap:8px"><input type="number" id="af-amt" placeholder="Amount $" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;font-size:13px;color:var(--t1);outline:none;width:140px"><button class="btn primary" onclick="addFunds()">Add funds</button></div>
+  </div>
+</div>
+
+<!-- CONNECT -->
+<div class="view" id="v-connect">
+  <div class="banner gold" style="margin-bottom:16px"><span class="banner-icon">⚡</span><div><strong>First margin number in 90 seconds — no code deploy.</strong> Connect your LLM provider key and Stripe below. Meridian pulls historical data from both and shows your per-user profitability table immediately. The SDK is for real-time tracking — it's step 3, not step 1.</div></div>
+  <div class="ss">
+    <div class="ss-num">1</div>
+    <div class="ss-body">
+      <div class="ss-title">Connect LLM providers — import your cost history, no code required</div>
+      <div class="ss-desc">Paste your API keys. Meridian pulls historical spend immediately — Cost Breakdown and Feature Margins populate within seconds. No SDK, no deploy, no waiting.</div>
+      <div id="p-list" class="pg" style="grid-template-columns:repeat(6,1fr);margin-bottom:10px"></div>
+      <button class="btn" onclick="showAddProvider()">+ Add provider</button>
+    </div>
+  </div>
+  <div class="ss">
+    <div class="ss-num">2</div>
+    <div class="ss-body">
+      <div class="ss-title">Connect billing — this is what unlocks per-user profitability</div>
+      <div class="ss-desc">Meridian needs to know what each user pays. Connect Stripe and we import all customers and their plan prices instantly — historical sync, no webhooks required for first data. This is what turns cost data into margin data.</div>
+      <div class="pg" style="margin-bottom:8px">
+        <div class="pc" id="stripe-card" onclick="connectBilling('stripe')"><div class="pcs add" id="stripe-st">+ CONNECT</div><div class="pcn">Stripe</div></div>
+        <div class="pc"><div class="pcs add">+ CONNECT</div><div class="pcn">Clerk</div></div>
+        <div class="pc"><div class="pcs add">COMING SOON</div><div class="pcn">Lago</div></div>
+        <div class="pc" onclick="showManualCsv()"><div class="pcs add">+ IMPORT</div><div class="pcn">CSV Upload</div></div>
+      </div>
+      <div class="fn">After connecting, we pull all existing customers and subscriptions. Future changes sync via webhook.</div>
+    </div>
+  </div>
+  <div class="ss">
+    <div class="ss-num">3</div>
+    <div class="ss-body">
+      <div class="ss-title">Install SDK — real-time margin tracking and automatic routing</div>
+      <div class="ss-desc">One import, one wrapper. The SDK intercepts every LLM call, checks your routing rules before sending, and records the transaction cost after. This is how you get live per-feature and per-user margin — not just historical averages.</div>
+      <div class="code"><span class="cm"># Install</span>
+pip install meridian-sdk
+
+<span class="cm"># Wrap your existing client — one line change</span>
+<span class="ck">from</span> meridian <span class="ck">import</span> MeridianProxy
+<span class="ck">import</span> anthropic
+
+client = <span class="cs">MeridianProxy</span>(anthropic.<span class="cs">Anthropic</span>(), api_key=<span class="cv">"<span id="c-key">mrd_your_key</span>"</span>,
+    feature=<span class="cv">"ai-chat"</span>, user_id=req.user.id)
+
+<span class="cm"># Enable prompt caching — saves ~$1,800/mo on typical setups:</span>
+system=[{<span class="cv">"type"</span>:<span class="cv">"text"</span>,<span class="cv">"text"</span>:prompt,<span class="hi">"cache_control":{"type":"ephemeral"}</span>}]</div>
+      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn primary" onclick="copyKey()">Copy API key</button><button class="btn" onclick="genKey()">Generate new key</button></div>
+    </div>
+  </div>
+  <div class="sec-hdr"><div class="sec-title">API keys</div><button class="btn" onclick="genKey()">+ New key</button></div>
+  <div class="tw"><table><thead><tr><th>Name</th><th>Prefix</th><th>Last used</th><th></th></tr></thead><tbody id="k-tbody"></tbody></table></div>
+</div>
+
+    </div></main>
+</div>
+<div id="err-b"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ─── STATE ─── */
+const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? ''
+  : (window.__MERIDIAN_API_URL__ || '');
+let tok  = ''; // set by Clerk on load
+let wsId = localStorage.getItem('mrd_ws') || '';
+let view = 'signal';
+let range = '7d';
+let custF = 'all';
+let spendTab = 'models';
+let sigData  = null;
+
+/* ─── API ─── */
+/* ─── DEMO DATA (renders when no backend is running) ─── */
+const DEMO = {
+  signal: {
+    ai_cost_mtd:4820, revenue_mtd:3240, margin_pct:-32.7, daily_burn_avg:155.5,
+    projected_month_end_cost:4820, days_elapsed:31, features_losing:3, features_total:5,
+    customers_losing:11, recoverable_monthly:2180, industry_avg_margin:34.1,
+    industry_avg_margin_source:'Bessemer/a16z 2024 (n≈2,400)', industry_avg_margin_live:false,
+    wallet_balance:420,
+    recoverable_breakdown:{
+      caching_gap:{amount:1050,basis:'20% of uncached Anthropic cost × 90% cache discount',confidence:'estimated'},
+      repricing_gap:{amount:1130,basis:'60% of $1,884 gap from 11 loss-margin users',confidence:'estimated'}
+    }
+  },
+  customers: {rows:[
+    {external_id:'usr_001',email:'alice@example.com',plan:'Pro',ai_cost:41.20,revenue:18,gap:-23.20,margin_pct:-128.9,session_count:47,avg_tokens_per_session:2840,feature:'ai-chat',status:'loss',billing_source:'stripe'},
+    {external_id:'usr_002',email:'bob@example.com',plan:'Pro',ai_cost:38.50,revenue:18,gap:-20.50,margin_pct:-113.9,session_count:39,avg_tokens_per_session:2610,feature:'ai-chat',status:'loss',billing_source:'csv'},
+    {external_id:'usr_003',email:'carol@example.com',plan:'Growth',ai_cost:22.10,revenue:49,gap:26.90,margin_pct:55.1,session_count:18,avg_tokens_per_session:980,feature:'code-review',status:'ok',billing_source:'stripe'},
+    {external_id:'usr_004',email:'dave@example.com',plan:'Pro',ai_cost:19.80,revenue:18,gap:-1.80,margin_pct:-10,session_count:21,avg_tokens_per_session:1420,feature:'ai-chat',status:'loss',billing_source:'stripe'},
+    {external_id:'usr_005',email:'eve@example.com',plan:'Growth',ai_cost:8.40,revenue:49,gap:40.60,margin_pct:82.9,session_count:9,avg_tokens_per_session:440,feature:'summarise',status:'ok',billing_source:'manual'},
+  ], total:5},
+  features:[
+    {name:'AI Chat',slug:'ai-chat',model:'claude-sonnet-4',total_tokens:3820000,ai_cost:2940,revenue:1620,margin_pct:-81.5,cost_per_req:0.0312,request_count:94200,status:'loss',revenue_source:'stripe'},
+    {name:'Code Review',slug:'code-review',model:'claude-sonnet-4',total_tokens:1240000,ai_cost:980,revenue:1960,margin_pct:50.0,cost_per_req:0.0148,request_count:66200,status:'ok',revenue_source:'stripe'},
+    {name:'Summarise',slug:'summarise',model:'claude-haiku-4',total_tokens:620000,ai_cost:280,revenue:840,margin_pct:66.7,cost_per_req:0.0028,request_count:100000,status:'ok',revenue_source:'estimated'},
+    {name:'Smart Search',slug:'search',model:'claude-haiku-4',total_tokens:480000,ai_cost:190,revenue:140,margin_pct:-35.7,cost_per_req:0.0019,request_count:100000,status:'loss',revenue_source:'estimated'},
+    {name:'Doc Q&A',slug:'doc-qa',model:'claude-sonnet-4',total_tokens:910000,ai_cost:430,revenue:680,margin_pct:36.9,cost_per_req:0.0086,request_count:50000,status:'thin',revenue_source:'manual'},
+  ],
+  models:[
+    {provider:'anthropic',model:'claude-sonnet-4-6',input_tokens:4200000,output_tokens:980000,cache_tokens:0,total_cost:3840,cost_per_1k_tokens:'0.87',pct_of_spend:79.7,has_caching:false},
+    {provider:'anthropic',model:'claude-haiku-4-5-20251001',input_tokens:1100000,output_tokens:220000,cache_tokens:180000,total_cost:470,cost_per_1k_tokens:'0.35',pct_of_spend:9.8,has_caching:true},
+    {provider:'openai',model:'gpt-4o-mini',input_tokens:880000,output_tokens:310000,cache_tokens:0,total_cost:510,cost_per_1k_tokens:'0.39',pct_of_spend:10.6,has_caching:false},
+  ],
+  ledger:{rows:[
+    {created_at:'2026-03-22T14:22:11Z',description:'AI Chat · claude-sonnet-4',type:'llm_call',model:'claude-sonnet-4',tokens:4820,amount:-0.0042,balance_after:419.58},
+    {created_at:'2026-03-22T14:18:03Z',description:'Code Review · claude-sonnet-4',type:'llm_call',model:'claude-sonnet-4',tokens:2240,amount:-0.0019,balance_after:419.58},
+    {created_at:'2026-03-22T09:00:00Z',description:'Wallet top-up',type:'credit',model:null,tokens:null,amount:500,balance_after:420},
+  ],total:3},
+  anomalies:[
+    {feature_name:'AI Chat',deviation_pct:187,current_avg_tokens:2840,baseline_avg_tokens:990,severity:'critical'},
+  ],
+  budgets:[
+    {id:'b1',name:'AI Chat monthly cap',scope:'feature',period:'monthly',limit_amount:500,spent:2940,pct_used:588,policy:'alert_only',alert_threshold:0.8,fallback_model:'claude-haiku-4-5-20251001',status:'breach'},
+    {id:'b2',name:'Workspace total',scope:'workspace',period:'monthly',limit_amount:6000,spent:4820,pct_used:80.3,policy:'alert_only',alert_threshold:0.8,fallback_model:null,status:'warn'},
+  ],
+  rules:[],
+  wallet:{balance:420,total_deposited:920,total_spent:500,auto_refill_enabled:false,auto_refill_threshold:50,auto_refill_amount:200,freeze_at_zero:true},
+  providers:[{type:'anthropic',name:'Anthropic',is_active:true,connected_at:'2026-03-01T00:00:00Z',last_sync:'2026-03-22T10:00:00Z'}],
+  keys:[{id:'k1',name:'Production',prefix:'mrd_live',last_used:'2026-03-22T14:22:11Z'}],
+  me:{id:'u1',email:'demo@meridian.ai',name:'Demo User',workspaces:[{id:'ws_demo',name:'Acme AI',slug:'acme-ai'}]},
+};
+
+function demoMatch(path) {
+  if (path.includes('/signal'))        return DEMO.signal;
+  if (path.includes('/customers'))     return DEMO.customers;
+  if (path.includes('/features'))      return DEMO.features;
+  if (path.includes('/spend/models'))  return DEMO.models;
+  if (path.includes('/spend/ledger'))  return DEMO.ledger;
+  if (path.includes('/spend/anomalies'))return DEMO.anomalies;
+  if (path.includes('/budgets'))       return DEMO.budgets;
+  if (path.includes('/routing-rules')) return DEMO.rules;
+  if (path.includes('/wallet'))        return DEMO.wallet;
+  if (path.includes('/providers'))     return DEMO.providers;
+  if (path.includes('/api-keys'))      return DEMO.keys;
+  if (path.includes('/simulate-pricing')) {
+    return {new_margin_pct:12.4,new_mrr:3240,recovery_monthly:0,ai_cost:4820,churned_users:11,assumptions:[]};
+  }
+  if (path.includes('/auth/me'))       return DEMO.me;
+  if (path.includes('/auth/login'))    return {token:'demo_tok',workspace_id:'ws_demo'};
+  return null;
+}
+
+let demoMode = false;
+
+async function api(method, path, body) {
+  if (demoMode) {
+    await new Promise(r => setTimeout(r, 120)); // simulate latency
+    const d = demoMatch(path);
+    if (d) return JSON.parse(JSON.stringify(d)); // deep clone
+    return null;
+  }
+  try {
+    const h = {'Content-Type':'application/json', 'Authorization':'Bearer '+tok};
+    const r = await fetch(API+path, {method, headers:h, body:body?JSON.stringify(body):undefined});
+    if (r.status === 401) { logout(); return null; }
+    if (!r.ok) { const e = await r.json().catch(()=>({detail:r.statusText})); showErr(e.detail||'Error'); return null; }
+    return r.json();
+  } catch(e) {
+    // No server — switch to demo mode silently
+    if (!demoMode) {
+      demoMode = true;
+      tok = 'demo_tok'; wsId = 'ws_demo';
+      console.info('[Meridian] No backend detected — running in demo mode');
+      // Re-trigger the current view with demo data
+      const d = demoMatch(path);
+      return d ? JSON.parse(JSON.stringify(d)) : null;
+    }
+    return null;
+  }
+}
+const GET   = p    => api('GET',   p);
+const POST  = (p,b) => api('POST',  p, b);
+const PATCH = (p,b) => api('PATCH', p, b);
+
+/* ─── UTILS ─── */
+const fmt  = n => (n||0).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+const fmtD = n => (n||0).toFixed(2);
+const fmtT = n => !n ? '0' : n>=1e6 ? (n/1e6).toFixed(1)+'M' : n>=1e3 ? (n/1e3).toFixed(0)+'K' : String(n);
+const days = () => range==='1d'?1 : range==='7d'?7 : range==='30d'?30 : 90;
+const show = id => { const e=document.getElementById(id); if(e) e.style.display=''; };
+const hide = id => { const e=document.getElementById(id); if(e) e.style.display='none'; };
+const vis  = (id, d='block') => { const e=document.getElementById(id); if(e) e.style.display=d; };
+
+function showErr(msg) {
+  const el = document.getElementById('err-b');
+  el.textContent = msg; el.style.display = 'block';
+  clearTimeout(el._t); el._t = setTimeout(()=>el.style.display='none', 4000);
+}
+function badge(id, n) {
+  const el = document.getElementById(id); if (!el) return;
+  el.textContent = n;
+  el.classList.toggle('hidden', !n || n === 0);
+}
+
+/* ─── AUTH — Clerk ─── */
+async function logout() {
+  try { await window.Clerk.signOut(); } catch(e) {}
+  tok=''; wsId=''; localStorage.removeItem('mrd_ws');
+  hide('app'); show('auth-screen');
+}
+function boot() {
+  hide('auth-screen'); show('app'); loadMe(); switchView('signal');
+}
+async function loadMe() {
+  const d = await GET('/api/auth/me'); if (!d) return;
+  wsId = d.workspaces[0]?.id || wsId;
+  localStorage.setItem('mrd_ws', wsId);
+  document.getElementById('ws-name').textContent = d.workspaces[0]?.name || 'Workspace';
+  document.getElementById('r-ws').textContent    = d.workspaces[0]?.name || '—';
+  const planEl = document.getElementById('ws-plan');
+  if (planEl) planEl.textContent = (d.workspaces[0]?.plan || 'free').toUpperCase();
+}
+window.addEventListener('load', async () => {
+  try {
+    await window.Clerk.load();
+    window.Clerk.mountSignIn(document.getElementById('clerk-sign-in'), {
+      appearance: {
+        variables: {
+          colorPrimary: '#e8a838',
+          colorBackground: '#111114',
+          colorText: '#f0ece4',
+          colorTextSecondary: '#7a7470',
+          colorInputBackground: '#1c1c21',
+          colorInputText: '#f0ece4',
+          borderRadius: '4px',
+          fontFamily: '"DM Sans", system-ui, sans-serif',
+        },
+        elements: {
+          card: { boxShadow: 'none', border: 'none', background: 'transparent' },
+          rootBox: { width: '100%' },
+        }
+      }
+    });
+    window.Clerk.addListener(async ({ session }) => {
+      if (session) {
+        tok = await session.getToken();
+        wsId = localStorage.getItem('mrd_ws') || '';
+        boot();
+      } else {
+        tok=''; wsId=''; hide('app'); show('auth-screen');
+      }
+    });
+    if (window.Clerk.session) {
+      tok = await window.Clerk.session.getToken();
+      wsId = localStorage.getItem('mrd_ws') || '';
+      boot();
+    }
+  } catch(e) {
+    console.error('[Clerk] Auth failed:', e);
+    const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isDev) {
+      console.info('[Meridian] Dev mode: loading demo data');
+      demoMode = true; tok='demo_tok'; wsId='ws_demo';
+      boot();
+    } else {
+      const authEl = document.getElementById('clerk-sign-in');
+      if (authEl) authEl.innerHTML = '<div style="color:#e05040;padding:20px;font-size:13px;font-family:system-ui">Authentication service unavailable. Please refresh or contact support.</div>';
+    }
+  }
+});
+
+/* ─── NAVIGATION ─── */
+const viewMeta = {
+  signal:   ['Margin Signal',        'Is your AI business model working right now?'],
+  customers:['Users & Profitability','Which users make money and which are costing you'],
+  pricing:  ['Pricing Simulator',    'What to charge — grounded in your actual cost structure'],
+  features: ['Feature Margins',      'Gross margin per product feature — where revenue is leaking'],
+  spend:    ['Cost Architecture',    'Where the AI budget went and what it's costing by month'],
+  digest:   ['Weekly Digest',        'Your margin vs industry — every Monday, one number, three actions'],
+  investor: ['Investor Report',      'Board-ready AI unit economics — one click, fully sourced'],
+  controls: ['Spend Caps & Rules',   'Budget enforcement, model routing, and wallet policy'],
+  connect:  ['Connect Data Sources', 'First margin insight in 90 seconds — no code deploy required'],
+};
+function switchView(id) {
+  view = id;
+  document.querySelectorAll('.nav-item[data-v]').forEach(n => n.classList.toggle('on', n.dataset.v === id));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === 'v-'+id));
+  const m = viewMeta[id] || ['',''];
+  document.getElementById('tb-title').textContent = m[0];
+  document.getElementById('tb-sub').textContent   = m[1];
+  const loaders = {signal:loadSignal, customers:loadCustomers, features:loadFeatures,
+    spend:loadSpend, controls:loadControls, investor:loadInvestor,
+    digest:loadDigest, pricing:initPricing, connect:loadConnect};
+  (loaders[id] || (()=>{}))();
+}
+document.querySelectorAll('.nav-item[data-v]').forEach(n =>
+  n.addEventListener('click', () => switchView(n.dataset.v)));
+document.querySelectorAll('.rbtn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.rbtn').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); range = b.dataset.r;
+  const refreshable = {signal:loadSignal, customers:loadCustomers, features:loadFeatures, spend:loadSpend};
+  (refreshable[view]||(() => {}))();
+}));
+
+/* ─── SIGNAL ─── */
+async function loadSignal() {
+  vis('sl'); hide('sc'); hide('sig-empty');
+  const d = await GET('/api/workspaces/'+wsId+'/signal'); if (!d) return;
+  sigData = d; hide('sl');
+  const hasData = d.ai_cost_mtd > 0 || d.revenue_mtd > 0;
+  if (!hasData) {
+    vis('sig-empty', 'block');
+    // Run the calculator with defaults so the number shows immediately
+    if (typeof calcEstimate === 'function') calcEstimate();
+    return;
+  }
+  vis('sc');
+  badge('nb-a', d.features_losing);
+  badge('nb-c', d.customers_losing);
+  renderSignal(d);
+}
+
+function renderSignal(d) {
+  const m = d.margin_pct || 0;
+  const loss = d.ai_cost_mtd - d.revenue_mtd;
+  // Banner — financial verdict, not a status update.
+  const b = document.getElementById('sig-banner');
+  if (m < 0) {
+    b.className = 'banner loss';
+    b.innerHTML = '<span class="banner-icon">▼</span><div><strong>Your AI features are operating at a loss this month.</strong> AI cost ($'+fmt(d.ai_cost_mtd)+') exceeds revenue ($'+fmt(d.revenue_mtd)+') by <strong>$'+fmt(Math.abs(loss))+'</strong>. This is a pricing architecture problem — not a usage problem. '+d.customers_losing+' users cost more than they pay. The Pricing Simulator will show you the exact price that fixes this.</div>';
+  } else if (m < 30) {
+    b.className = 'banner warn';
+    b.innerHTML = '<span class="banner-icon">↓</span><div><strong>Margin is '+m+'% — '+(34.1-m).toFixed(1)+'pp below the industry average of '+d.industry_avg_margin+'%.</strong> '+d.features_losing+' feature'+(d.features_losing!==1?'s':'')+' at negative margin. '+d.customers_losing+' users cost more than they pay. Monthly exposure: <strong>$'+fmt(Math.abs(loss))+'</strong>. Ranked actions below are sorted by recovery value.</div>';
+  } else {
+    b.className = 'banner ok';
+    b.innerHTML = '<span class="banner-icon">▲</span><div><strong>AI margin '+m+'% — '+(m-34.1).toFixed(1)+'pp above the industry average of '+d.industry_avg_margin+'%.</strong> $'+fmt(d.recoverable_monthly)+' in identifiable savings still on the table. '+d.features_losing+' feature'+(d.features_losing!==1?'s':'')+' to watch.</div>';
+  }
+
+  // KPIs — Playfair Display hero numbers, financial framing
+  // Build recoverable breakdown tooltip from API data
+  const recBreakdown = d.recoverable_breakdown || {};
+  const cachingAmt   = recBreakdown.caching_gap   ? '$'+fmt(recBreakdown.caching_gap.amount)   : null;
+  const repricingAmt = recBreakdown.repricing_gap ? '$'+fmt(recBreakdown.repricing_gap.amount) : null;
+  const recTooltip   = [
+    cachingAmt   ? cachingAmt+' prompt caching (estimated)'    : null,
+    repricingAmt ? repricingAmt+' repricing gap (estimated)'   : null,
+  ].filter(Boolean).join(' + ') || 'estimated';
+
+  // Industry avg source annotation
+  const iSrc = d.industry_avg_margin_live
+    ? '● live Meridian data'
+    : '~ '+( d.industry_avg_margin_source || 'Bessemer/a16z 2024');
+
+  document.getElementById('sig-kpis').innerHTML = [
+    {l:'AI COST THIS MONTH',  v:'$'+fmt(d.ai_cost_mtd),            c:d.ai_cost_mtd>d.revenue_mtd?'red':'',  d:'$'+fmtD(d.daily_burn_avg)+'/day avg burn'},
+    {l:'BILLED REVENUE',      v:'$'+fmt(d.revenue_mtd),            c:'',                                     d:d.days_elapsed+' days elapsed'},
+    {l:'AI GROSS MARGIN',     v:m+'%',                              c:m<20?'red':m<40?'amber':'green',        d:'industry avg: '+d.industry_avg_margin+'% · '+iSrc, dc:m<d.industry_avg_margin?'bad':'good'},
+    {l:'WALLET RUNWAY',       v:'~'+Math.round(d.wallet_balance/Math.max(0.01,d.daily_burn_avg))+'d', c:'gold', d:'$'+fmt(d.wallet_balance)+' balance'},
+    {l:'RECOVERABLE',         v:'$'+fmt(d.recoverable_monthly),    c:'green',                                d:recTooltip, dc:'gold'},
+  ].map(k => '<div class="kpi-card" title="'+k.l+'"><div class="kpi-label">'+k.l+'</div><div class="kpi-num '+(k.c||'')+'">'+k.v+'</div><div class="kpi-delta '+(k.dc||'')+'">'+k.d+'</div></div>').join('');
+
+  document.getElementById('rec-pill').textContent =
+    d.recoverable_monthly > 0 ? '+$'+fmt(d.recoverable_monthly)+'/mo recoverable' : '';
+
+  // Actions — P1/P2 ranked by dollar recovery
+  const acts = [];
+  if (d.customers_losing > 0) acts.push({
+    p:'P1', t:'today',
+    title: d.customers_losing+' users cost more than they pay',
+    desc:  d.customers_losing+' users generate more AI cost than their subscription covers. You need higher plan prices, a usage cap, or overage billing. Every day this runs is a dollar loss with a name attached.',
+    proof: 'Net loss from these users: $'+fmt(d.recoverable_monthly*0.55)+'/mo — recoverable today',
+    impact:'+$'+fmt(d.recoverable_monthly*0.55),
+    act:"switchView('pricing')", aL:'Open Pricing Simulator →',
+    sec:"switchView('customers')", sL:'See affected users'
+  });
+  if (d.ai_cost_mtd > 500) acts.push({
+    p:'P1', t:'1 line of code',
+    title: 'Prompt caching is likely off — costing ~$'+fmt(d.ai_cost_mtd*0.15)+'/mo',
+    desc:  "Anthropic caches repeated system prompt content at 90% discount. If your system prompt isn't marked cache_control, you pay full price on every call. One change, zero quality impact.",
+    proof: 'Estimated monthly waste: $'+fmt(d.ai_cost_mtd*0.15)+' — fix: one cache_control block',
+    impact:'+$'+fmt(d.ai_cost_mtd*0.15),
+    act:"switchView('connect')", aL:'See implementation →', sec:null
+  });
+  if (d.features_losing >= 1) acts.push({
+    p:'P2', t:'this week',
+    title: d.features_losing+' feature'+(d.features_losing>1?'s':'')+' running at negative gross margin',
+    desc:  'Features at negative margin have one of three problems: context bloat, wrong model for the job, or flat pricing that cannot cover heavy users. See Feature Margins to identify which.',
+    proof: null,
+    impact:'+$'+fmt(d.recoverable_monthly*0.25),
+    act:"switchView('features')", aL:'See feature margins →',
+    sec:"switchView('spend')", sL:'Cost breakdown'
+  });
+
+  if (!acts.length) {
+    document.getElementById('sig-actions').innerHTML = '<div class="banner ok"><span class="banner-icon">✓</span><div><strong>No immediate actions required.</strong> Margin is healthy. $'+fmt(d.recoverable_monthly)+' in potential savings identified — see the pricing simulator to explore scenarios. Next digest: Monday 8am.</div></div>';
+    return;
+  }
+
+  document.getElementById('sig-actions').innerHTML = acts.map(a => `
+    <div style="border:1px solid var(--rule);border-radius:6px;margin-bottom:8px;display:flex;overflow:hidden;background:var(--bg1)">
+      <div style="width:48px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-right:1px solid var(--rule);background:${a.p==='P1'?'var(--red-bg)':'var(--amber-dim)'};padding:10px 6px">
+        <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:${a.p==='P1'?'var(--red)':'var(--amber)'}">${a.p}</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">${a.t}</span>
+      </div>
+      <div style="flex:1;padding:12px 14px">
+        <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px">${a.title}</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--t3);line-height:1.6">${a.desc}</div>
+        ${a.proof ? '<div style="margin-top:6px;font-family:var(--mono);font-size:10px;padding:4px 8px;border-radius:3px;background:var(--red-bg);color:var(--red)">'+a.proof+'</div>' : ''}
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <button class="btn primary" onclick="${a.act}">${a.aL}</button>
+          ${a.sec ? '<button class="btn" onclick="'+a.sec+'">'+a.sL+'</button>' : ''}
+        </div>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;min-width:106px;flex-shrink:0;border-left:1px solid var(--rule)">
+        <div style="font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.02em;color:var(--green)">${a.impact}</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t4)">/mo recoverable</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ─── USERS & REVENUE ─── */
+async function loadCustomers() {
+  vis('cll'); hide('cc'); hide('c-empty'); hide('cust-aw'); hide('cust-lb');
+  const q = custF && custF !== 'all' ? '&status='+custF : '';
+  const d = await GET('/api/workspaces/'+wsId+'/customers?limit=50'+q); if (!d) return;
+  hide('cll');
+  const rows = d.rows || [];
+  if (!rows.length) { vis('c-empty','flex'); return; }
+  vis('cc');
+
+  // Attribution confidence — three tiers: Stripe (verified), CSV (partial), none (estimated)
+  // billing_source from API: "stripe" = verified live sync | "csv" = manual import | "manual"/"" = estimated
+  const stripeRows = rows.filter(r => r.billing_source === 'stripe');
+  const csvRows    = rows.filter(r => r.billing_source === 'csv');
+  const hasStripe  = stripeRows.length > 0;
+  const hasCsv     = csvRows.length > 0;
+  const allVerified = hasStripe && stripeRows.length === rows.length;
+
+  // Show warning unless ALL rows are Stripe-verified
+  document.getElementById('cust-aw').style.display = allVerified ? 'none' : 'flex';
+
+  const rth = document.getElementById('rev-th');
+  if (rth) {
+    const badge = allVerified
+      ? '<span class="ab v">● Stripe</span>'
+      : hasCsv && !hasStripe
+        ? '<span class="ab m">CSV import</span>'
+        : hasStripe
+          ? '<span class="ab m">partial Stripe</span>'
+          : '<span class="ab e">~ est</span>';
+    rth.innerHTML = 'Revenue ' + badge;
+  }
+
+  const lossRows = rows.filter(r => r.status === 'loss');
+  if (lossRows.length > 0) {
+    const netLoss = lossRows.reduce((s,r) => s+Math.abs(r.gap), 0);
+    const lb = document.getElementById('cust-lb');
+    lb.style.display = 'flex';
+    lb.innerHTML = '<span class="banner-icon">↓</span><div><strong>'+lossRows.length+' users cost more than they pay.</strong> Net loss this period: <strong>$'+fmtD(netLoss)+'</strong>. Avg over-plan cost: $'+fmtD(netLoss/lossRows.length)+'/user. <span style="color:var(--gold);cursor:pointer;text-decoration:underline" onclick="switchView(\'pricing\')">Fix in Pricing Simulator →</span></div>';
+  }
+
+  document.getElementById('ctbody').innerHTML = rows.map(r => {
+    const gc = r.gap < 0 ? 'tr' : r.gap < 10 ? 'ta' : 'tg';
+    const mc = r.margin_pct < 0 ? 'tr' : r.margin_pct < 40 ? 'ta' : 'tg';
+    const gs = (r.gap < 0 ? '−' : '+') + '$' + fmtD(Math.abs(r.gap));
+    const tc = r.avg_tokens_per_session > 2000 ? 'tr' : r.avg_tokens_per_session > 1000 ? 'ta' : 'td';
+    const estAttr = !hasStripe ? ' title="Estimated — connect Stripe for accurate attribution"' : '';
+    return '<tr>'
+      + '<td><div class="tn">'+(r.email||r.external_id||'—')+'</div><div style="font-family:var(--mono);font-size:10px;color:var(--t4)">'+(r.external_id||'')+'</div></td>'
+      + '<td><span class="chip '+(r.plan==='Growth'?'gold':r.plan==='Pro'?'info':'neu')+'">'+(r.plan||'—')+'</span></td>'
+      + '<td class="tm" style="color:'+(r.ai_cost>r.revenue?'var(--red)':'var(--t2)')+'">$'+fmtD(r.ai_cost)+'</td>'
+      + '<td '+ (
+          r.billing_source === 'stripe'  ? 'title="Stripe-verified"' :
+          r.billing_source === 'csv'     ? 'class="ta" title="CSV import — verify plan prices are current"' :
+                                           'class="ta" title="Estimated — connect Stripe for verified revenue"'
+        ) + '>$'+fmtD(r.revenue)
+        + (r.billing_source !== 'stripe'
+          ? ' <span style="font-family:var(--mono);font-size:9px;color:var(--amber);opacity:.7">'
+            + (r.billing_source === 'csv' ? 'csv' : '~est')
+            + '</span>'
+          : '')
+        + '</td>'
+      + '<td class="'+gc+'">'+gs+'</td>'
+      + '<td class="'+mc+'">'+(r.margin_pct>0?'+':'')+r.margin_pct+'%</td>'
+      + '<td class="td">'+r.session_count+'</td>'
+      + '<td class="'+tc+'">'+Math.round(r.avg_tokens_per_session||0).toLocaleString()+'</td>'
+      + '<td><span class="chip '+r.status+'">'+r.status.toUpperCase()+'</span></td>'
+      + '</tr>';
+  }).join('');
+}
+function fc(f) { custF = f; loadCustomers(); }
+function exportCsv() { alert('Export CSV — wire to /api/workspaces/{id}/customers?format=csv'); }
+
+/* ─── FEATURE MARGINS ─── */
+async function loadFeatures() {
+  vis('fl'); hide('fcon'); hide('f-empty');
+  const d = await GET('/api/workspaces/'+wsId+'/features'); if (!d) return;
+  hide('fl');
+  if (!d.length) { vis('f-empty','flex'); return; }
+  vis('fcon');
+  const loss = d.filter(f=>f.status==='loss').length;
+  const thin = d.filter(f=>f.status==='thin').length;
+  const ok   = d.filter(f=>f.status==='ok').length;
+  const bl   = (d.reduce((s,f)=>s+f.margin_pct,0)/d.length).toFixed(1);
+  document.getElementById('fkpis').innerHTML = [
+    {l:'FEATURES',      v:d.length, c:''},
+    {l:'AT LOSS',       v:loss,     c:loss?'red':''},
+    {l:'THIN MARGIN',   v:thin,     c:thin?'amber':''},
+    {l:'HEALTHY',       v:ok,       c:ok?'green':''},
+    {l:'BLENDED MARGIN',v:bl+'%',   c:bl<20?'red':bl<40?'amber':'green'},
+  ].map(k => '<div class="kpi-card"><div class="kpi-label">'+k.l+'</div><div class="kpi-num '+(k.c||'')+'">'+k.v+'</div></div>').join('');
+  const favg = document.getElementById('f-avg');
+  favg.textContent = bl+'%'; favg.className = bl<20?'tr':bl<40?'ta':'tg';
+
+  document.getElementById('ftbody').innerHTML = d.map(f => {
+    const mc  = f.margin_pct < 0 ? 'tr' : f.margin_pct < 40 ? 'ta' : 'tg';
+    const pct = Math.min(100, Math.max(0, f.margin_pct));
+    const clr = f.margin_pct<0?'var(--red)':f.margin_pct<40?'var(--amber)':'var(--green)';
+    // Attribution badge always visible — fix #7
+    const src = f.revenue_source==='stripe'
+      ? '<span class="ab v">● Stripe</span>'
+      : f.revenue_source==='manual'
+        ? '<span class="ab m">Manual</span>'
+        : '<span class="ab e">~ est</span>';
+    const crc = f.cost_per_req > 0.05 ? 'tr' : f.cost_per_req > 0.01 ? 'ta' : 'tg';
+    return '<tr>'
+      +'<td class="tn">'+f.name+'<div style="font-family:var(--mono);font-size:10px;color:var(--t4)">'+f.slug+'</div></td>'
+      +'<td class="tm">$'+fmtD(f.ai_cost)+'</td>'
+      +'<td>$'+fmtD(f.revenue)+' '+src+'</td>'
+      +'<td><div class="mbar-row"><div class="mbar"><div class="mbar-fill" style="width:'+pct+'%;background:'+clr+'"></div></div><span class="'+mc+'">'+(f.margin_pct>0?'+':'')+f.margin_pct+'%</span></div></td>'
+      +'<td class="'+crc+'">$'+f.cost_per_req.toFixed(4)+'</td>'
+      +'<td class="td">'+(f.request_count||0).toLocaleString()+'</td>'
+      +'<td><span class="chip '+f.status+'">'+f.status.toUpperCase()+'</span></td>'
+      +'<td><button class="btn '+(f.status==='loss'?'danger':'')+'" onclick="switchView(\''+(f.status==='loss'?'pricing':'signal')+'\')">'
+        +(f.status==='loss'?'Fix pricing':f.status==='thin'?'Review':'—')+'</button></td>'
+      +'</tr>';
+  }).join('');
+}
+
+/* ─── COST BREAKDOWN ─── */
+function switchSpend(t) {
+  spendTab = t;
+  ['models','ledger','anomalies'].forEach(s => {
+    vis('sp-'+s, s===t ? 'block' : 'none');
+    const b = document.getElementById('st-'+s[0]);
+    if (b) {
+      b.style.borderBottom = s===t ? '2px solid var(--gold)' : '2px solid transparent';
+      b.style.fontWeight   = s===t ? '600' : '400';
+      b.style.color        = s===t ? 'var(--t1)' : '';
+    }
+  });
+  if (t==='models')    loadModels();
+  if (t==='ledger')    loadLedger();
+  if (t==='anomalies') loadAnomalies();
+}
+async function loadSpend() { switchSpend(spendTab); }
+
+async function loadModels() {
+  vis('ml'); hide('msum'); hide('mtw');
+  const d = await GET('/api/workspaces/'+wsId+'/spend/models?days='+days()); if (!d) return;
+  hide('ml');
+  const ms = document.getElementById('msum');
+  ms.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px';
+  ms.innerHTML = d.slice(0,3).map(m =>
+    '<div style="background:var(--bg2);border:1px solid var(--rule);border-radius:6px;padding:14px">'
+    +'<div style="font-family:var(--mono);font-size:9px;color:var(--t4);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px">'+(m.provider||'')+'·'+m.model+'</div>'
+    +'<div style="font-family:var(--display);font-size:24px;font-weight:700;letter-spacing:-.03em;color:var(--t1)">$'+fmt(m.total_cost)+'</div>'
+    +'<div style="font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:3px">'+m.pct_of_spend+'% of spend</div>'
+    +'</div>').join('');
+  vis('mtw');
+  document.getElementById('mtbody').innerHTML = d.map(m =>
+    '<tr>'
+    +'<td><div class="tn">'+m.model+'</div><div style="font-family:var(--mono);font-size:10px;color:var(--t4)">'+(m.provider||'')+'</div></td>'
+    +'<td class="tm">'+fmtT(m.input_tokens)+'</td>'
+    +'<td class="tm">'+fmtT(m.output_tokens)+'</td>'
+    +'<td class="'+(m.has_caching?'tg':'tr')+'">'+(m.has_caching?fmtT(m.cache_tokens)+' ✓':'0 ⚠')+'</td>'
+    +'<td class="tm">$'+fmtD(m.total_cost)+'</td>'
+    +'<td><div class="mbar-row"><div class="mbar"><div class="mbar-fill" style="width:'+m.pct_of_spend+'%;background:var(--gold)"></div></div><span class="td">'+m.pct_of_spend+'%</span></div></td>'
+    +'<td class="tm">$'+m.cost_per_1k_tokens+'</td>'
+    +'<td style="font-family:var(--mono);font-size:11px;color:'+(m.has_caching?'var(--green)':'var(--red)')+'">'
+      +(m.has_caching?'Caching active':'No caching — losing $')+'</td>'
+    +'</tr>').join('');
+}
+
+async function loadLedger() {
+  vis('ll'); hide('ltw'); hide('l-empty'); hide('lfn');
+  const d = await GET('/api/workspaces/'+wsId+'/spend/ledger?limit=50'); if (!d) return;
+  hide('ll');
+  if (!d.rows || !d.rows.length) { vis('l-empty','flex'); return; }
+  vis('ltw'); vis('lfn');
+  document.getElementById('ltbody').innerHTML = d.rows.map(r => {
+    const as = (r.amount<0?'−':'+')+' $'+Math.abs(r.amount).toFixed(4);
+    const ac = r.amount<0?'tr':'tg';
+    return '<tr>'
+      +'<td class="td" style="white-space:nowrap">'+(r.created_at?.slice(11,19)||'—')+'</td>'
+      +'<td style="color:var(--t2)">'+(r.description||'—')+'</td>'
+      +'<td><span class="chip '+(r.type==='credit'?'ok':r.type==='fee'?'thin':'neu')+'">'+(r.type?.toUpperCase()||'—')+'</span></td>'
+      +'<td class="td">'+(r.model||'—')+'</td>'
+      +'<td class="td">'+(r.tokens?.toLocaleString()||'—')+'</td>'
+      +'<td class="'+ac+'" style="text-align:right">'+as+'</td>'
+      +'<td class="td" style="text-align:right">$'+(r.balance_after||0).toFixed(2)+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+async function loadAnomalies() {
+  vis('al');
+  const d = await GET('/api/workspaces/'+wsId+'/spend/anomalies?days=7'); if (!d) return;
+  hide('al');
+  const el = document.getElementById('acon');
+  if (!d.length) {
+    el.innerHTML = '<div class="banner ok"><span class="banner-icon">✓</span><div><strong>No cost anomalies.</strong> AI spend is within normal range over the past 7 days.</div></div>';
+    return;
+  }
+  // Reframe as financial impact, not engineering event — fix #4
+  el.innerHTML = d.map(a =>
+    '<div class="banner '+(a.severity==='critical'?'loss':'warn')+'" style="margin-bottom:8px">'
+    +'<span class="banner-icon">'+(a.severity==='critical'?'▲':'△')+'</span>'
+    +'<div><strong>'+a.feature_name+' spend up '+a.deviation_pct+'% vs 7-day average.</strong> '
+    +'Average cost per call: '+a.current_avg_tokens.toLocaleString()+' tokens (baseline: '+a.baseline_avg_tokens.toLocaleString()+'). '
+    +'Monthly exposure if this continues: <strong>$'+fmt(a.current_avg_tokens/1000*0.003*30*100)+'</strong> vs expected $'+fmt(a.baseline_avg_tokens/1000*0.003*30*100)+'. '
+    +'Typical cause: context bloat or injecting full documents instead of retrieved chunks.</div>'
+    +'</div>'
+  ).join('');
+}
+
+/* ─── PRICING SIMULATOR with reasoning ─── */
+const scens = [
+  {p:18, g:49, n:214, cap:0,   ov:0,     fr:50, ch:5},
+  {p:29, g:49, n:214, cap:100, ov:0,     fr:50, ch:8},
+  {p:18, g:49, n:214, cap:0,   ov:0.002, fr:50, ch:4},
+  {p:18, g:69, n:180, cap:50,  ov:0.003, fr:50, ch:10},
+];
+function applyScen(i) {
+  document.querySelectorAll('.sc').forEach((c,j) => c.classList.toggle('on', j===i));
+  const s = scens[i];
+  document.getElementById('sp-pro').value = s.p;
+  document.getElementById('sp-gr').value  = s.g;
+  document.getElementById('sp-n').value   = s.n;
+  document.getElementById('sp-cap').value = s.cap;
+  document.getElementById('sp-ov').value  = s.ov;
+  document.getElementById('sp-fr').value  = s.fr;
+  document.getElementById('sp-ch').value  = s.ch;
+  runSim();
+}
+async function initPricing() {
+  const d = sigData || await GET('/api/workspaces/'+wsId+'/signal');
+  if (d && d.ai_cost_mtd > 0) {
+    const perUser = (d.ai_cost_mtd / Math.max(1, (d.features_total||10) + d.customers_losing)).toFixed(2);
+    document.getElementById('sim-ac').textContent = '$'+perUser;
+    document.getElementById('sim-hc').textContent = '$'+(parseFloat(perUser)*2.5).toFixed(2);
+    document.getElementById('sim-lc').textContent = '$'+(parseFloat(perUser)*0.22).toFixed(2);
+    document.getElementById('sim-tc').textContent = '$'+fmt(d.ai_cost_mtd);
+  }
+  runSim();
+}
+async function runSim() {
+  const b = {
+    pro_price:     parseFloat(document.getElementById('sp-pro').value)||18,
+    growth_price:  parseFloat(document.getElementById('sp-gr').value)||49,
+    pro_count:     parseInt(document.getElementById('sp-n').value)||0,
+    cap_tokens_k:  parseInt(document.getElementById('sp-cap').value)||0,
+    overage_per_1k:parseFloat(document.getElementById('sp-ov').value)||0,
+    free_tokens_k: parseInt(document.getElementById('sp-fr').value)||50,
+    churn_pct:     parseFloat(document.getElementById('sp-ch').value)||5,
+  };
+  const d = await POST('/api/workspaces/'+wsId+'/simulate-pricing', b); if (!d) return;
+
+  const me = document.getElementById('sr-m');
+  me.textContent = d.new_margin_pct+'%';
+  me.className   = 'sr-v '+(d.new_margin_pct<20?'r':d.new_margin_pct>40?'g':'');
+
+  const re = document.getElementById('sr-r');
+  re.textContent = (d.recovery_monthly>=0?'+$':'-$') + fmt(Math.abs(d.recovery_monthly));
+  re.className   = 'sr-v '+(d.recovery_monthly>=0?'g':'r');
+
+  document.getElementById('sr-mrr').textContent = '$'+fmt(d.new_mrr);
+  document.getElementById('sr-c').textContent   = '$'+fmt(d.ai_cost);
+  document.getElementById('sr-ch').textContent  = d.churned_users;
+  document.getElementById('sc-0r').textContent  = d.new_margin_pct+'% · '+(d.recovery_monthly>=0?'+':'')+' $'+fmt(d.recovery_monthly)+'/mo';
+
+  // Reasoning — grounded in this workspace's data, not generic advice
+  const r     = document.getElementById('sim-rsn');
+  const minVP = (d.ai_cost > 0 && b.pro_count > 0)
+    ? ((d.ai_cost / b.pro_count) / 0.4).toFixed(0) : '—';
+
+  let txt = '<strong>Why this result:</strong> At $'+b.pro_price+'/mo Pro, each user must cost less than $'+(b.pro_price*0.6).toFixed(2)+'/mo in AI to hit 60% gross margin. ';
+  if (b.cap_tokens_k > 0)   txt += 'The '+b.cap_tokens_k+'K token cap prevents heavy users (top 20% drive ~60% of cost on uncapped plans) from consuming disproportionate budget. ';
+  if (b.overage_per_1k > 0) txt += 'Overage at $'+b.overage_per_1k+'/1K tokens converts heavy users from cost centre to revenue source. ';
+  txt += 'The '+b.churn_pct+'% churn is your input — adjust it based on your retention data. ';
+  txt += '<strong>Minimum viable Pro price for 60% AI gross margin: $'+minVP+'/mo.</strong>';
+
+  // Assumptions table — every modelled assumption from the backend, made visible
+  // confidence: verified = from your data | estimated = modelled | your_input = you entered it
+  const assumptions = d.assumptions || [];
+  if (assumptions.length > 0) {
+    txt += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)">'
+      + '<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);margin-bottom:8px">Assumptions behind this result</div>';
+    txt += assumptions.map(a => {
+      const confColor = a.confidence === 'verified'   ? 'var(--green)'
+                      : a.confidence === 'your_input' ? 'var(--blue)'
+                      : 'var(--amber)';
+      const confLabel = a.confidence === 'verified'   ? '● verified'
+                      : a.confidence === 'your_input' ? '✎ your input'
+                      : '~ estimated';
+      return '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+        + '<div style="font-family:var(--mono);font-size:10px;color:var(--t3);flex:1">'
+          + '<span style="color:var(--t2)">' + a.label + '</span>'
+          + ' — ' + a.value
+          + '<div style="font-size:9px;color:var(--t4);margin-top:1px">' + a.basis + '</div>'
+        + '</div>'
+        + '<span style="font-family:var(--mono);font-size:9px;color:'+confColor+';flex-shrink:0;letter-spacing:.07em">' + confLabel + '</span>'
+        + '</div>';
+    }).join('');
+    txt += '</div>';
+  }
+
+  r.innerHTML = txt; r.style.display = 'block';
+}
+
+/* ─── CONTROLS ─── */
+async function loadControls() { loadBudgets(); loadRules(); loadWallet(); }
+
+async function loadBudgets() {
+  vis('bll'); document.getElementById('blist').innerHTML = '';
+  const d = await GET('/api/workspaces/'+wsId+'/budgets'); if (!d) return;
+  hide('bll');
+  badge('nb-b', d.filter(b=>b.status==='breach').length);
+  if (!d.length) {
+    document.getElementById('blist').innerHTML = '<div class="fn" style="padding:12px 0">No spend caps. <a onclick="showAddBudget()">Add one →</a></div>';
+    return;
+  }
+  document.getElementById('blist').innerHTML = d.map(b =>
+    '<div class="bc '+b.status+'">'
+    +'<div class="bc-top">'
+      +'<div><div class="bc-name">'+b.name+'</div><div class="bc-scope">'+b.scope+' · '+b.period+' · '+b.policy.replace(/_/g,' ')+'</div></div>'
+      +'<div style="display:flex;gap:6px;align-items:center">'
+        +'<span class="chip '+(b.status==='breach'?'loss':b.status==='warn'?'thin':'ok')+'">'+(b.status==='breach'?'BREACHED':b.pct_used+'%')+'</span>'
+        +(b.status==='breach'
+          ? '<button class="btn danger" onclick="enfBudget(\''+b.id+'\')">Enforce now</button>'
+          : '<button class="btn" onclick="editBudget(\''+b.id+'\')">Edit</button>')
+      +'</div>'
+    +'</div>'
+    +'<div class="pw"><div class="pf" style="width:'+Math.min(100,b.pct_used)+'%;background:'+(b.status==='breach'?'var(--red)':b.status==='warn'?'var(--amber)':'var(--green)')+'"></div></div>'
+    +'<div class="bc-meta">'
+      +'<span class="'+(b.status==='breach'?'tr':'')+'">$'+fmtD(b.spent)+' / $'+fmtD(b.limit_amount)+'</span>'
+      +(b.status==='breach' ? '<span class="tr">+$'+fmtD(b.spent-b.limit_amount)+' over limit</span>' : '<span>$'+fmtD(b.limit_amount-b.spent)+' remaining</span>')
+      +(b.fallback_model ? '<span>Fallback: '+b.fallback_model+'</span>' : '')
+    +'</div></div>'
+  ).join('');
+}
+
+async function loadRules() {
+  vis('rll'); hide('rtw'); hide('r-empty');
+  const d = await GET('/api/workspaces/'+wsId+'/routing-rules'); if (!d) return;
+  hide('rll');
+  if (!d.length) { vis('r-empty','flex'); return; }
+  vis('rtw');
+  document.getElementById('rtbody').innerHTML = d.map(r =>
+    '<tr>'
+    +'<td><div class="toggle '+(r.is_active?'on':'')+'" onclick="toggleRule(\''+r.id+'\',this)"></div></td>'
+    +'<td class="tn">'+r.name+'</td>'
+    +'<td class="td">'+JSON.stringify(r.trigger).replace(/[{}"]/g,'').slice(0,40)+'</td>'
+    +'<td class="tm">'+(r.action?.type||'—')+(r.action?.model?' → '+r.action.model:'')+'</td>'
+    +'<td class="td">'+(r.trigger_count||0)+'</td>'
+    +'<td><button class="btn ghost" onclick="editRule(\''+r.id+'\')" style="font-size:10px">Edit</button></td>'
+    +'</tr>'
+  ).join('');
+}
+
+async function loadWallet() {
+  vis('wll'); hide('wcon');
+  const d = await GET('/api/workspaces/'+wsId+'/wallet'); if (!d) return;
+  hide('wll'); vis('wcon');
+  document.getElementById('w-bal').textContent = '$'+fmtD(d.balance);
+  document.getElementById('w-sp').textContent  = '$'+fmtD(d.total_spent);
+  document.getElementById('w-dep').textContent = '$'+fmtD(d.total_deposited);
+  if (d.auto_refill_enabled) {
+    document.getElementById('w-rt').classList.add('on');
+    document.getElementById('w-rc').textContent = 'ACTIVE';
+    document.getElementById('w-rc').className   = 'chip ok';
+    document.getElementById('w-rd').textContent = 'Refills $'+d.auto_refill_amount+' when below $'+d.auto_refill_threshold;
+  }
+  if (d.freeze_at_zero) {
+    document.getElementById('w-ft').classList.add('on');
+    document.getElementById('w-fc').textContent = 'ACTIVE';
+    document.getElementById('w-fc').className   = 'chip ok';
+  }
+}
+async function toggleW(f, el) { el.classList.toggle('on'); await PATCH('/api/workspaces/'+wsId+'/wallet',{[f]:el.classList.contains('on')}); loadWallet(); }
+async function toggleRule(id, el) { el.classList.toggle('on'); await PATCH('/api/workspaces/'+wsId+'/routing-rules/'+id,{is_active:el.classList.contains('on')}); }
+async function enfBudget(id) { await PATCH('/api/workspaces/'+wsId+'/budgets/'+id,{policy:'hard_cap'}); loadBudgets(); }
+async function addFunds() { const a = parseFloat(document.getElementById('af-amt').value); if (!a||a<=0) return; await POST('/api/workspaces/'+wsId+'/wallet/add-funds?amount='+a); loadWallet(); }
+
+/* ─── INVESTOR REPORT ─── */
+async function loadInvestor() {
+  const [sig, feats] = await Promise.all([
+    GET('/api/workspaces/'+wsId+'/signal'),
+    GET('/api/workspaces/'+wsId+'/features'),
+  ]); if (!sig||!feats) return;
+  const m = sig.margin_pct, gap = m - sig.industry_avg_margin;
+  document.getElementById('r-per').textContent = new Date().toLocaleDateString('en-AU',{month:'long',year:'numeric'})+' · Powered by Meridian';
+  const mh = document.getElementById('r-mh');
+  mh.textContent = m+'%'; mh.style.color = m<20?'var(--red)':m<40?'var(--amber)':'var(--green)';
+  document.getElementById('r-vs').innerHTML = '<span class="chip '+(gap>=0?'ok':'loss')+'">'+(gap>=0?'↑':'↓')+Math.abs(gap).toFixed(1)+'pp vs industry</span>';
+  document.getElementById('r-kpis').innerHTML = [
+    {l:'AI COST MTD',    v:'$'+fmt(sig.ai_cost_mtd),         s:'this month to date'},
+    {l:'BILLED REVENUE', v:'$'+fmt(sig.revenue_mtd),         s:''},
+    {l:'AI GROSS MARGIN',v:m+'%',                             s:'industry avg: '+sig.industry_avg_margin+'%'},
+    {l:'RECOVERABLE',    v:'$'+fmt(sig.recoverable_monthly),  s:'identified savings'},
+  ].map(k => '<div class="rk"><div class="rkl">'+k.l+'</div><div class="rkv">'+k.v+'</div><div class="rks">'+k.s+'</div></div>').join('');
+  feats.sort((a,b) => b.margin_pct - a.margin_pct);
+  document.getElementById('r-bars').innerHTML = feats.map(f => {
+    const pct = Math.min(100, Math.max(0, f.margin_pct));
+    const clr = f.margin_pct<0?'var(--red)':f.margin_pct<40?'var(--amber)':'var(--green)';
+    const vc  = f.margin_pct<0?'tr':f.margin_pct<40?'ta':'tg';
+    return '<div class="trend-row"><span class="trend-lbl">'+f.name+'</span>'
+      +'<div class="trend-bar"><div class="trend-fill" style="width:'+pct+'%;background:'+clr+'"></div></div>'
+      +'<span class="trend-val '+vc+'">'+(f.margin_pct>0?'+':'')+f.margin_pct+'%</span></div>';
+  }).join('');
+  const srcLabel = sig.industry_avg_margin_live
+    ? 'Meridian live benchmark data'
+    : (sig.industry_avg_margin_source || 'Bessemer/a16z 2024 (n≈2,400)');
+
+  document.getElementById('r-narr').textContent =
+    'AI margin is '+m+'%, '+Math.abs(gap).toFixed(1)+'pp '+(gap>=0?'above':'below')
+    +' the industry average of '+sig.industry_avg_margin+'% ('
+    +(sig.industry_avg_margin_live ? 'live data' : 'published benchmark: '+srcLabel)+').'
+    +' '+sig.features_losing+' feature'+(sig.features_losing!==1?'s':'')+' currently at negative margin.'
+    +' Meridian has identified $'+fmt(sig.recoverable_monthly)+'/mo in recoverable margin'
+    +' (estimated: prompt caching gap + repricing gap — see Signal view for breakdown).'
+    +' Projected recovery to '+Math.min(85, m+Math.abs(gap)*0.7).toFixed(0)+'% gross margin'
+    +' within 60 days with identified actions implemented.';
+
+  // Add benchmark source footnote
+  const existingFn = document.getElementById('r-bench-fn');
+  if (!existingFn) {
+    const fn = document.createElement('div');
+    fn.id = 'r-bench-fn';
+    fn.style.cssText = 'font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:10px;padding-top:8px;border-top:1px solid var(--rule);line-height:1.5';
+    fn.textContent = 'Industry benchmark: '+sig.industry_avg_margin+'% AI gross margin · Source: '
+      + srcLabel + (sig.industry_avg_margin_live ? ' · Updates as Meridian workspace data grows' : ' · Will be replaced with Meridian live data once ≥50 workspaces opt in');
+    document.getElementById('r-narr').after(fn);
+  }
+}
+function exportReport() { alert('PDF export — wire to server-side generation endpoint'); }
+
+/* ─── DIGEST ─── */
+async function loadDigest() {
+  const d = await GET('/api/workspaces/'+wsId+'/signal'); if (!d) return;
+  const m = d.margin_pct;
+  const col = m < 30 ? 'var(--amber)' : 'var(--green)';
+  document.getElementById('d-num').textContent = m+'%';
+  document.getElementById('d-num').style.color = col;
+  document.getElementById('d-ms').textContent  = m+'%';
+  document.getElementById('d-ms').style.color  = col;
+  const wow = document.getElementById('d-wow');
+  wow.textContent = m<34.1 ? '↓ '+(34.1-m).toFixed(1)+'pp below industry' : '↑ '+(m-34.1).toFixed(1)+'pp above industry';
+  wow.style.color = m<34.1 ? 'var(--red)' : 'var(--green)';
+  document.getElementById('d-rw').textContent = '~'+Math.round(d.wallet_balance/Math.max(0.01,d.daily_burn_avg))+' days at current burn';
+  document.getElementById('d-op').textContent = d.customers_losing>0 ? d.customers_losing+' users over plan' : 'None this week';
+  document.getElementById('d-act').textContent = d.recoverable_monthly > 100
+    ? '$'+fmt(d.recoverable_monthly)+'/mo recoverable this month. Top action: enable prompt caching on your primary endpoint — likely disabled, costing ~$'+fmt(d.ai_cost_mtd*0.15)+'/mo.'
+    : 'Margin is stable. Watch '+d.customers_losing+' users approaching plan limits.';
+}
+
+/* ─── CONNECT ─── */
+async function loadConnect() {
+  const [provs, keys] = await Promise.all([
+    GET('/api/workspaces/'+wsId+'/providers'),
+    GET('/api/workspaces/'+wsId+'/api-keys'),
+  ]);
+  const conn = (provs||[]).map(p => p.type);
+  ['anthropic','openai','google','mistral','openrouter','cohere'].forEach(p => {
+    const el = document.querySelector('[onclick="connectProv(\''+p+'\')"]');
+  });
+  document.getElementById('p-list').innerHTML = ['anthropic','openai','google','mistral','openrouter','cohere'].map(p =>
+    '<div class="pc '+(conn.includes(p)?'connected':'')+'" onclick="connectProv(\''+p+'\')">'
+    +'<div class="pcs '+(conn.includes(p)?'connected':'add')+'">'+(conn.includes(p)?'✓ CONNECTED':'+ CONNECT')+'</div>'
+    +'<div class="pcn">'+(p.charAt(0).toUpperCase()+p.slice(1))+'</div></div>'
+  ).join('');
+  const ks = keys||[];
+  document.getElementById('k-tbody').innerHTML = ks.length
+    ? ks.map(k => '<tr><td class="tn">'+k.name+'</td><td class="tm">'+(k.prefix||'mrd_')+'…</td><td class="td">'+(k.last_used?new Date(k.last_used).toLocaleDateString():'Never')+'</td><td><button class="btn danger" style="font-size:10px">Revoke</button></td></tr>').join('')
+    : '<tr><td colspan="4" class="td" style="text-align:center;padding:16px">No API keys yet.</td></tr>';
+}
+async function connectProv(t) { const k=prompt('Enter '+t+' API key:'); if(!k) return; await POST('/api/workspaces/'+wsId+'/providers',{type:t,api_key:k}); loadConnect(); }
+async function connectBilling(s) {
+  if (s !== 'stripe') return;
+  const k = prompt('Enter Stripe secret key (sk_live_... or sk_test_...):'); if (!k) return;
+  await POST('/api/workspaces/'+wsId+'/billing',{source:'stripe',stripe_secret_key:k});
+  document.getElementById('stripe-st').textContent = '✓ CONNECTED';
+  document.getElementById('stripe-st').className   = 'pcs connected';
+  document.getElementById('stripe-card').classList.add('connected');
+}
+async function copyKey() {
+  const d = await POST('/api/workspaces/'+wsId+'/api-keys'); if (!d) return;
+  navigator.clipboard.writeText(d.key).catch(()=>{});
+  document.getElementById('c-key').textContent = (d.prefix||'mrd_')+'…';
+  alert('API key (shown once):\n\n'+d.key+'\n\nCopied to clipboard.'); loadConnect();
+}
+async function genKey() {
+  const n = prompt('Key name:', 'Default'); if (!n) return;
+  const d = await POST('/api/workspaces/'+wsId+'/api-keys?name='+encodeURIComponent(n)); if (!d) return;
+  navigator.clipboard.writeText(d.key).catch(()=>{});
+  alert('New API key (shown once):\n\n'+d.key+'\n\nCopied to clipboard.'); loadConnect();
+}
+
+/* ─── MODALS ─── */
+function showModal(title, html, onOk) {
+  document.getElementById('_m')?.remove();
+  const el = document.createElement('div'); el.id = '_m';
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+  el.innerHTML = '<div class="mbox">'
+    +'<div class="mhdr"><div class="mtitle">'+title+'</div><button class="mclose" onclick="document.getElementById(\'_m\').remove()">×</button></div>'
+    +'<div class="mbody" id="_mb">'+html+'</div>'
+    +'<div class="mftr"><button class="btn" onclick="document.getElementById(\'_m\').remove()">Cancel</button><button class="btn primary" id="_mok">Save</button></div>'
+    +'</div>';
+  document.body.appendChild(el);
+  document.getElementById('_mok').onclick = () => { onOk(); el.remove(); };
+  el.addEventListener('click', e => { if (e.target===el) el.remove(); });
+}
+
+async function showAddBudget() {
+  const feats = await GET('/api/workspaces/'+wsId+'/features') || [];
+  showModal('Add Spend Cap',
+    '<div class="mf"><label>Cap name</label><input id="nb-n" placeholder="e.g. AI Chat monthly cap"></div>'
+    +'<div class="mf"><label>Feature (blank = workspace-level)</label><select id="nb-f"><option value="">— Workspace level —</option>'+feats.map(x=>'<option value="'+x.feature_id+'">'+x.name+'</option>').join('')+'</select></div>'
+    +'<div class="mf"><label>Monthly limit ($)</label><input id="nb-l" type="number" placeholder="100" min="1"></div>'
+    +'<div class="mf"><label>Policy when breached</label><select id="nb-p"><option value="alert_only">Alert only</option><option value="soft_cap">Route to cheaper model</option><option value="hard_cap">Block requests</option><option value="upgrade_prompt">Return 402</option></select></div>'
+    +'<div class="mf"><label>Alert at (% of limit)</label><input id="nb-t" type="number" value="80" min="10" max="100"></div>'
+    +'<div class="mf"><label>Fallback model</label><select id="nb-fm"><option value="">— None —</option><option value="claude-haiku-4-5-20251001">claude-haiku</option><option value="gpt-4o-mini">gpt-4o-mini</option></select></div>',
+    async () => {
+      const n = document.getElementById('nb-n').value; if (!n) { showErr('Name required'); return; }
+      await POST('/api/workspaces/'+wsId+'/budgets', {
+        name: n, feature_id: document.getElementById('nb-f').value||null, period:'monthly',
+        limit_amount: parseFloat(document.getElementById('nb-l').value)||100,
+        policy: document.getElementById('nb-p').value,
+        alert_threshold: parseFloat(document.getElementById('nb-t').value)/100,
+        fallback_model: document.getElementById('nb-fm').value||null,
+      }); loadBudgets();
+    });
+}
+
+async function editBudget(id) {
+  showModal('Edit Spend Cap',
+    '<div class="mf"><label>New limit ($)</label><input id="eb-l" type="number"></div>'
+    +'<div class="mf"><label>Policy</label><select id="eb-p"><option value="alert_only">Alert only</option><option value="soft_cap">Route to cheaper model</option><option value="hard_cap">Block requests</option></select></div>'
+    +'<div class="mf"><label>Active</label><select id="eb-a"><option value="true">Yes</option><option value="false">Pause</option></select></div>',
+    async () => {
+      const b = {}; const l = parseFloat(document.getElementById('eb-l').value); if (l) b.limit_amount = l;
+      b.policy = document.getElementById('eb-p').value;
+      b.is_active = document.getElementById('eb-a').value === 'true';
+      await PATCH('/api/workspaces/'+wsId+'/budgets/'+id, b); loadBudgets();
+    });
+}
+
+function showAddRule() {
+  showModal('Add Routing Rule',
+    '<div class="mf"><label>Rule name</label><input id="nr-n" placeholder="e.g. Route small requests to Haiku"></div>'
+    +'<div class="mf"><label>Trigger</label><select id="nr-tr"><option value="input_tokens_lt">Input tokens &lt; threshold</option><option value="budget_pct">Budget % reached</option><option value="user_spend_gt_plan">User AI cost exceeds plan</option></select></div>'
+    +'<div class="mf"><label>Value / threshold</label><input id="nr-tv" type="number" value="800"></div>'
+    +'<div class="mf"><label>Action</label><select id="nr-ac"><option value="route_model">Route to model</option><option value="block">Block request</option><option value="return_402">Return 402</option></select></div>'
+    +'<div class="mf"><label>Target model</label><select id="nr-m"><option value="claude-haiku-4-5-20251001">claude-haiku (10× cheaper)</option><option value="gpt-4o-mini">gpt-4o-mini</option><option value="claude-sonnet-4-6">claude-sonnet</option></select></div>'
+    +'<div class="mf"><label>Priority (lower = first)</label><input id="nr-pr" type="number" value="10" min="1"></div>',
+    async () => {
+      const n = document.getElementById('nr-n').value; if (!n) { showErr('Name required'); return; }
+      const tt = document.getElementById('nr-tr').value;
+      const tv = parseFloat(document.getElementById('nr-tv').value);
+      const at = document.getElementById('nr-ac').value;
+      await POST('/api/workspaces/'+wsId+'/routing-rules', {
+        name: n, priority: parseInt(document.getElementById('nr-pr').value)||10,
+        trigger: tt==='input_tokens_lt' ? {type:tt,value:tv}
+                : tt==='budget_pct'     ? {type:tt,threshold:tv/100}
+                : {type:tt, multiplier:tv/100},
+        action: at==='route_model'
+          ? {type:at, model:document.getElementById('nr-m').value}
+          : {type:at},
+      }); loadRules();
+    });
+}
+
+async function editRule(id) {
+  showModal('Edit Rule',
+    '<div class="mf"><label>Priority</label><input id="er-p" type="number"></div>'
+    +'<div class="mf"><label>Status</label><select id="er-a"><option value="true">Active</option><option value="false">Paused</option></select></div>',
+    async () => {
+      const b = {}; const p = parseInt(document.getElementById('er-p').value); if (p) b.priority = p;
+      b.is_active = document.getElementById('er-a').value === 'true';
+      await PATCH('/api/workspaces/'+wsId+'/routing-rules/'+id, b); loadRules();
+    });
+}
+
+function showAddProvider() {
+  showModal('Add LLM Provider',
+    '<div class="mf"><label>Provider</label><select id="ap-t"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="google">Google</option><option value="mistral">Mistral</option><option value="openrouter">OpenRouter</option><option value="cohere">Cohere</option></select></div>'
+    +'<div class="mf"><label>API key</label><input id="ap-k" type="password" placeholder="sk-ant-…"></div>',
+    async () => {
+      const k = document.getElementById('ap-k').value; if (!k) { showErr('API key required'); return; }
+      await POST('/api/workspaces/'+wsId+'/providers', {type:document.getElementById('ap-t').value, api_key:k});
+      loadConnect();
+    });
+}
+
+async function showManualCsv() {
+  showModal('Import Users via CSV',
+    '<div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.7">Columns: <code style="background:var(--bg3);padding:1px 4px;border-radius:2px;font-family:var(--mono)">user_id, email, name, plan_name, monthly_price</code><br>Example: usr_001, alice@co.io, Alice, Pro, 18.00</div>'
+    +'<div class="mf"><label>CSV file</label><input id="csv-f" type="file" accept=".csv" style="background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;padding:6px;color:var(--t2);width:100%"></div>',
+    async () => {
+      const f = document.getElementById('csv-f').files[0]; if (!f) { showErr('Select a file'); return; }
+      const txt = await f.text(); const rows = txt.split('\n').filter(r=>r.trim()).slice(1); let n = 0;
+      for (const row of rows) {
+        const [eid, email, name, plan, price] = row.split(',').map(s=>s?.trim());
+        if (!eid) continue;
+        await POST('/api/workspaces/'+wsId+'/customers', {
+          external_id:eid, email:email||'', name:name||'',
+          plan_name:plan||'', plan_price_monthly:parseFloat(price)||0, billing_source:'csv'
+        }); n++;
+      }
+      alert('Imported '+n+' users.'); switchView('customers');
+    });
+}
+
+/* ─── BOOT — handled by Clerk listener above ─── */
+// Clerk's window.addEventListener('load') fires boot() once session confirmed.
+// Falls back to demo mode if Clerk fails to load.
+</script>
+
+<!-- ── PASSWORD RESET MODAL ── -->
+<div id="reset-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:var(--bg2);border:1px solid var(--b);border-radius:8px;padding:32px;width:360px;max-width:90vw">
+    <h3 style="margin:0 0 8px;font-size:16px;color:var(--t1)">Reset password</h3>
+    <p style="margin:0 0 20px;font-size:13px;color:var(--t3)">Enter your email and we'll send a reset link.</p>
+    <input id="reset-email" type="email" placeholder="you@example.com"
+      style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--bg3);border:1px solid var(--b);border-radius:4px;color:var(--t1);font-size:13px;margin-bottom:12px">
+    <div id="reset-msg" style="font-size:12px;color:var(--gold);min-height:18px;margin-bottom:8px"></div>
+    <div style="display:flex;gap:8px">
+      <button onclick="submitReset()" style="flex:1;padding:10px;background:var(--gold);color:#111;border:none;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">Send link</button>
+      <button onclick="hideResetModal()" style="flex:1;padding:10px;background:transparent;color:var(--t3);border:1px solid var(--b);border-radius:4px;font-size:13px;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+function showResetModal() {
+  const m = document.getElementById('reset-modal');
+  m.style.display = 'flex';
+  document.getElementById('reset-email').focus();
+}
+function hideResetModal() {
+  document.getElementById('reset-modal').style.display = 'none';
+  document.getElementById('reset-msg').textContent = '';
+  document.getElementById('reset-email').value = '';
+}
+async function submitReset() {
+  const email = document.getElementById('reset-email').value.trim();
+  const msg   = document.getElementById('reset-msg');
+  if (!email) { msg.textContent = 'Enter your email.'; return; }
+  msg.textContent = 'Sending…';
+  try {
+    await fetch(API + '/api/auth/request-password-reset', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email})
+    });
+    msg.style.color = 'var(--gold)';
+    msg.textContent = 'If that email exists, a link is on its way.';
+    setTimeout(hideResetModal, 3000);
+  } catch(e) {
+    msg.style.color = '#e05040';
+    msg.textContent = 'Request failed. Try again.';
+  }
+}
+// Close on backdrop click
+document.getElementById('reset-modal').addEventListener('click', function(e) {
+  if (e.target === this) hideResetModal();
+});
+</script>
+
+
+<script>
+// Handle password reset confirmation link (?token=...&user_id=...)
+(function() {
+  const p = new URLSearchParams(window.location.search);
+  const token = p.get('token'), userId = p.get('user_id');
+  if (!token || !userId) return;
+  // Show reset confirm modal immediately
+  window.addEventListener('load', function() {
+    const modal = document.getElementById('reset-modal');
+    if (!modal) return;
+    modal.innerHTML = \`
+      <div style="background:var(--bg2);border:1px solid var(--b);border-radius:8px;padding:32px;width:360px;max-width:90vw">
+        <h3 style="margin:0 0 8px;font-size:16px;color:var(--t1)">Set new password</h3>
+        <input id="np1" type="password" placeholder="New password (8+ chars)"
+          style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--bg3);border:1px solid var(--b);border-radius:4px;color:var(--t1);font-size:13px;margin-bottom:10px">
+        <input id="np2" type="password" placeholder="Confirm new password"
+          style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--bg3);border:1px solid var(--b);border-radius:4px;color:var(--t1);font-size:13px;margin-bottom:12px">
+        <div id="npr-msg" style="font-size:12px;color:#e05040;min-height:18px;margin-bottom:8px"></div>
+        <button onclick="confirmReset()" style="width:100%;padding:10px;background:var(--gold);color:#111;border:none;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">Set password</button>
+      </div>\`;
+    modal.style.display = 'flex';
+  });
+  window.confirmReset = async function() {
+    const pw1 = document.getElementById('np1').value;
+    const pw2 = document.getElementById('np2').value;
+    const msg = document.getElementById('npr-msg');
+    if (pw1.length < 8) { msg.textContent = 'Password must be 8+ characters.'; return; }
+    if (pw1 !== pw2)    { msg.textContent = 'Passwords do not match.'; return; }
+    msg.style.color = 'var(--gold)'; msg.textContent = 'Saving…';
+    const r = await fetch(API + '/api/auth/reset-password', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({token, user_id: userId, new_password: pw1})
+    });
+    if (r.ok) {
+      msg.textContent = 'Password updated! Redirecting…';
+      setTimeout(() => { window.location.href = '/app'; }, 1500);
+    } else {
+      msg.style.color = '#e05040';
+      msg.textContent = 'Link expired or invalid. Request a new one.';
+    }
+  };
+})();
+</script>
+
+<script>
+/* ─── QUICK ESTIMATE CALCULATOR ─── */
+function calcEstimate() {
+  const price    = parseFloat(document.getElementById('qe-price').value)  || 18;
+  const users    = parseInt(document.getElementById('qe-users').value)    || 50;
+  const calls    = parseFloat(document.getElementById('qe-calls').value)  || 8;
+  const tokens   = parseInt(document.getElementById('qe-tokens').value)   || 2000;
+  const costPer1k= parseFloat(document.getElementById('qe-model').value)  || 0.003;
+  const mult     = parseFloat(document.getElementById('qe-mult').value)   || 2;
+
+  const outputMult  = 3;  // output tokens cost ~3x input per token, typical ratio
+  const outputRatio = 0.4; // 40% of token budget is output
+
+  const inputTokens  = tokens * (1 - outputRatio);
+  const outputTokens = tokens * outputRatio;
+  const costPerCall  = (inputTokens / 1000 * costPer1k) + (outputTokens / 1000 * costPer1k * outputMult);
+
+  const avgCostPerUser   = costPerCall * calls * 30; // per month
+  const heavyUserCost    = avgCostPerUser * mult;
+
+  // 20% are heavy users, 80% are avg or below
+  const totalAiCost = (users * 0.2 * heavyUserCost) + (users * 0.8 * avgCostPerUser * 0.6);
+  const totalRev    = users * price;
+  const margin      = totalRev > 0 ? ((totalRev - totalAiCost) / totalRev * 100) : 0;
+
+  // How many users losing money?
+  // A user loses money if their AI cost > their plan price
+  const lossUsers = Math.round(users * (heavyUserCost > price ? 0.2 : 0) + users * (avgCostPerUser > price ? 0.5 : 0));
+
+  const fmt = v => v >= 1000 ? (v/1000).toFixed(1)+'K' : v.toFixed(0);
+
+  document.getElementById('qe-cost').textContent   = '$' + fmt(totalAiCost);
+  document.getElementById('qe-rev').textContent    = '$' + fmt(totalRev);
+  document.getElementById('qe-loss').textContent   = lossUsers;
+
+  const mEl = document.getElementById('qe-margin');
+  mEl.textContent = margin.toFixed(0) + '%';
+  mEl.style.color = margin < 0 ? 'var(--red)' : margin < 30 ? 'var(--amber)' : 'var(--green)';
+
+  const verdict = document.getElementById('qe-verdict');
+  if (margin < 0) {
+    verdict.innerHTML = '<strong style="color:var(--red)">Your AI features are running at a loss on these numbers.</strong> You\'re spending <strong>$' + fmt(totalAiCost - totalRev) + '/mo more</strong> than you collect. Roughly <strong>' + lossUsers + ' of your ' + users + ' users</strong> cost more than their subscription. This is a pricing architecture problem — the Pricing Simulator will show you the minimum price that fixes it.';
+  } else if (margin < 25) {
+    verdict.innerHTML = '<strong style="color:var(--amber)">Margin is thin at ' + margin.toFixed(0) + '%.</strong> Industry average for AI SaaS is ~34%. Your heavy users (' + Math.round(users*0.2) + ' people, ~' + mult + '× avg usage) are the risk — if a few more push their usage up, you dip into the red. A usage cap or overage tier on Pro would protect you.';
+  } else {
+    verdict.innerHTML = '<strong style="color:var(--green)">Margins look healthy at ' + margin.toFixed(0) + '%</strong> on these estimates. Connect real data to verify — heavy user distribution is where surprises hide. Still, <strong>' + lossUsers + ' users</strong> may be running at a loss based on usage spread.';
+  }
+}
+window.addEventListener('load', function() { if (document.getElementById('qe-price')) calcEstimate(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://YOUR-APP.up.railway.app/api/$1"
+    },
+    {
+      "src": "/proxy/(.*)",
+      "dest": "https://YOUR-APP.up.railway.app/proxy/$1"
+    },
+    {
+      "src": "/webhooks/(.*)",
+      "dest": "https://YOUR-APP.up.railway.app/webhooks/$1"
+    },
+    {
+      "src": "/app(.*)",
+      "dest": "/frontend/indexv8.1.html"
+    },
+    {
+      "src": "/",
+      "dest": "/landing/indexv8.1.html"
+    }
+  ]
+}
