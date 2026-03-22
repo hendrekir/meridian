@@ -2,7 +2,7 @@
 nixPkgs = ["python311", "gcc"]
 
 [phases.install]
-cmds = ["pip install -r backend/requirementsv8.1.txt"]
+cmds = ["pip install -r backend/requirementsv8.2.txt"]
 
 [start]
-cmd = "cd backend && uvicorn indexv8.1:app --host 0.0.0.0 --port $PORT"
+cmd = "cd backend && uvicorn indexv8.2:app --host 0.0.0.0 --port $PORT"

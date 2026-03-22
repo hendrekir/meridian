@@ -1,5 +1,5 @@
 """
-meridian-sdk v8.1
+meridian-sdk v8.2
 One-line wrapper that intercepts every LLM call and sends cost + token data
 to your Meridian workspace in the background. Zero latency added.
 
@@ -13,4 +13,4 @@ from .proxy import MeridianProxy
 from .config import configure
 
 __all__ = ["MeridianProxy", "configure"]
-__version__ = "8.1.0"
+__version__ = "8.2.0"

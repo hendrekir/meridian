@@ -1,4 +1,4 @@
-"""meridian-sdk v8.1 — config.py
+"""meridian-sdk v8.2 — config.py
 Global configuration singleton. Set once at startup via configure().
 """
 import os

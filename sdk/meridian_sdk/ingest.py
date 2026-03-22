@@ -1,5 +1,5 @@
 """
-meridian-sdk v8.1 - ingest.py
+meridian-sdk v8.2 - ingest.py
 Fire-and-forget background HTTP sender to Meridian proxy ingest endpoint.
 """
 import threading
