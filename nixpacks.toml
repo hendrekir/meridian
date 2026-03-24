@@ -1,8 +1,2 @@
-[phases.setup]
-nixPkgs = ["python311", "gcc"]
-
-[phases.install]
-cmds = ["python3.11 -m pip install -r backend/requirementsv8_3.txt"]
-
 [start]
 cmd = "cd backend && uvicorn indexv8_3:app --host 0.0.0.0 --port $PORT"
