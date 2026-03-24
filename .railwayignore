@@ -1,0 +1,6 @@
+sdk/
+frontend/
+landing/
+.claude/
+.vercel/
+.DS_Store
