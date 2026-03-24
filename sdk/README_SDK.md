@@ -1,4 +1,4 @@
-# meridian-sdk v8.2
+# meridian-sdk v8.3
 
 One-line wrapper that intercepts every LLM call and sends cost + token data to your Meridian workspace. Zero dependencies. Zero latency added (fire-and-forget background thread).
 

@@ -1,10 +1,10 @@
 #!/bin/bash
-# Meridian v8.2 — local dev setup
+# Meridian v8.3 — local dev setup
 # Run once after cloning: bash setup.sh
 
 set -e
 
-echo "→ Setting up Meridian v8.2..."
+echo "→ Setting up Meridian v8.3..."
 
 # Check Python
 python3 --version || { echo "Python 3.11+ required"; exit 1; }
@@ -33,13 +33,13 @@ rm -f .env.bak
 
 # Install dependencies
 cd backend
-pip install -r requirementsv8.2.txt --quiet
+pip install -r requirementsv8.3.txt --quiet
 echo "→ Python dependencies installed"
 cd ..
 
 echo ""
 echo "✓ Setup complete. Start with:"
-echo "  cd backend && uvicorn indexv8.2:app --reload"
+echo "  cd backend && uvicorn indexv8.3:app --reload"
 echo ""
 echo "  App: http://localhost:8000/app"
 echo "  API docs: http://localhost:8000/docs"

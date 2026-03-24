@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name = "meridian-sdk"
-version = "8.2.0"
+version = "8.3.0"
 description = "One-line LLM cost tracking and margin intelligence for AI SaaS"
 readme = "README_SDK.md"
 license = {text = "MIT"}

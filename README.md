@@ -1,4 +1,4 @@
-# Meridian v8.2
+# Meridian v8.3
 
 AI margin intelligence — track what your LLM features actually cost per user.
 
@@ -6,7 +6,7 @@ AI margin intelligence — track what your LLM features actually cost per user.
 
 ```bash
 bash setup.sh
-cd backend && uvicorn indexv8.2:app --reload
+cd backend && uvicorn indexv8.3:app --reload
 # → http://localhost:8000/app
 ```
 
@@ -15,17 +15,17 @@ cd backend && uvicorn indexv8.2:app --reload
 ```
 meridian/
 ├── backend/
-│   ├── indexv8.2.py          ← FastAPI app (main entry point)
-│   ├── modelsv8.2.py         ← SQLAlchemy models
-│   ├── databasev8.2.py       ← DB engine + session
-│   ├── authv8.2.py           ← JWT + Clerk JWKS + password hashing
-│   ├── analyticsv8.2.py      ← All read queries
-│   ├── proxyv8.2.py          ← Routing rules, wallet, transaction recording
-│   ├── encryptionv8.2.py     ← Fernet encryption for stored API keys
-│   ├── email_servicev8.2.py  ← Resend transactional emails
-│   └── requirementsv8.2.txt
+│   ├── indexv8.3.py          ← FastAPI app (main entry point)
+│   ├── modelsv8.3.py         ← SQLAlchemy models
+│   ├── databasev8.3.py       ← DB engine + session
+│   ├── authv8.3.py           ← JWT + Clerk JWKS + password hashing
+│   ├── analyticsv8.3.py      ← All read queries
+│   ├── proxyv8.3.py          ← Routing rules, wallet, transaction recording
+│   ├── encryptionv8.3.py     ← Fernet encryption for stored API keys
+│   ├── email_servicev8.3.py  ← Resend transactional emails
+│   └── requirementsv8.3.txt
 ├── frontend/
-│   └── indexv8.2.html        ← Single-file frontend
+│   └── indexv8.3.html        ← Single-file frontend
 ├── .env.example               ← Copy to .env and fill in
 ├── .gitignore
 ├── nixpacks.toml              ← Railway build config
@@ -68,7 +68,7 @@ meridian/
 - **Email/password (fallback)**: `POST /api/auth/register` and `POST /api/auth/login`
   - Returns a HS256 JWT, works the same way
 
-## What was fixed in v8.2
+## What was fixed in v8.3
 
 - Added 5 missing backend modules (`database`, `auth`, `analytics`, `proxy`, `encryption`)
 - Clerk JWKS verification — backend now correctly verifies Clerk-issued JWTs

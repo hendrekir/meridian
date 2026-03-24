@@ -1,4 +1,4 @@
-"""meridian-sdk v8.2 — proxy.py
+"""meridian-sdk v8.3 — proxy.py
 MeridianProxy: transparent wrapper for Anthropic/OpenAI clients.
 """
 from __future__ import annotations
