@@ -4,7 +4,7 @@
     "builder": "DOCKERFILE"
   },
   "deploy": {
-    "startCommand": "/opt/venv/bin/uvicorn app:app --host 0.0.0.0 --port $PORT",
+    "startCommand": "bash start.sh",
     "restartPolicyType": "ON_FAILURE"
   }
 }
