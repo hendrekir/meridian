@@ -1,29 +1,11 @@
 {
   "version": 2,
   "routes": [
-    {
-      "src": "/health",
-      "dest": "https://meridian-lpoa-production.up.railway.app/health"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "https://meridian-lpoa-production.up.railway.app/api/$1"
-    },
-    {
-      "src": "/proxy/(.*)",
-      "dest": "https://meridian-lpoa-production.up.railway.app/proxy/$1"
-    },
-    {
-      "src": "/webhooks/(.*)",
-      "dest": "https://meridian-lpoa-production.up.railway.app/webhooks/$1"
-    },
-    {
-      "src": "/app(.*)",
-      "dest": "/frontend/indexv8_3_2.html"
-    },
-    {
-      "src": "/",
-      "dest": "/landing/indexv8_3_2.html"
-    }
+    {"src": "/health",        "dest": "https://meridian-lpoa-production.up.railway.app/health"},
+    {"src": "/api/(.*)",      "dest": "https://meridian-lpoa-production.up.railway.app/api/$1"},
+    {"src": "/proxy/(.*)",    "dest": "https://meridian-lpoa-production.up.railway.app/proxy/$1"},
+    {"src": "/webhooks/(.*)", "dest": "https://meridian-lpoa-production.up.railway.app/webhooks/$1"},
+    {"src": "/app(.*)",       "dest": "/frontend/indexv8.3.3.html"},
+    {"src": "/",              "dest": "/landing/indexv8.3.3.html"}
   ]
 }
