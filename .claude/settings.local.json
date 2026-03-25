@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(vercel --prod)"
+      "Bash(vercel --prod)",
+      "Bash(curl -s https://web-production-b7653.up.railway.app/health)"
     ]
   }
 }
