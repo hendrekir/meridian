@@ -2,6 +2,10 @@
   "version": 2,
   "routes": [
     {
+      "src": "/health",
+      "dest": "https://meridian-lpoa-production.up.railway.app/health"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "https://meridian-lpoa-production.up.railway.app/api/$1"
     },
