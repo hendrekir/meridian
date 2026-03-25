@@ -1,0 +1,6 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY backend/requirementsv8.3.3.txt .
+RUN pip install --no-cache-dir -r requirementsv8.3.3.txt
+COPY . .
+CMD ["sh", "-c", "python -m uvicorn app:app --host 0.0.0.0 --port $PORT"]
