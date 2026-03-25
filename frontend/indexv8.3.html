@@ -1820,7 +1820,7 @@ document.getElementById('reset-modal').addEventListener('click', function(e) {
   window.addEventListener('load', function() {
     const modal = document.getElementById('reset-modal');
     if (!modal) return;
-    modal.innerHTML = \`
+    modal.innerHTML = `
       <div style="background:var(--bg2);border:1px solid var(--b);border-radius:8px;padding:32px;width:360px;max-width:90vw">
         <h3 style="margin:0 0 8px;font-size:16px;color:var(--t1)">Set new password</h3>
         <input id="np1" type="password" placeholder="New password (8+ chars)"
@@ -1829,7 +1829,7 @@ document.getElementById('reset-modal').addEventListener('click', function(e) {
           style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--bg3);border:1px solid var(--b);border-radius:4px;color:var(--t1);font-size:13px;margin-bottom:12px">
         <div id="npr-msg" style="font-size:12px;color:#e05040;min-height:18px;margin-bottom:8px"></div>
         <button onclick="confirmReset()" style="width:100%;padding:10px;background:var(--gold);color:#111;border:none;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">Set password</button>
-      </div>\`;
+      </div>`;
     modal.style.display = 'flex';
   });
   window.confirmReset = async function() {
