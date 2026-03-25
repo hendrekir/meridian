@@ -119,7 +119,7 @@ curl https://meridianvisual.io/api/health
 ```
 meridianv8.3/
 ├── backend/          ← Deploy to Railway (Python/FastAPI)
-│   ├── indexv8.3.2.py  ← Entry point
+│   ├── indexv8_3_2.py  ← Entry point
 │   └── *.py
 ├── frontend/
 │   └── indexv8.3.html  ← Dashboard — served at /app

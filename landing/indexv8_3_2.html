@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian v8.3 — You're probably losing money on 40% of your Pro users</title>
+<meta name="description" content="Meridian shows you exactly which AI users cost more than they pay — and what to charge to fix it. One-line SDK. First insight in 90 seconds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0a0b;--ink2:#1a1a1e;--ink3:#2a2a30;
+  --paper:#f5f2ed;--paper2:#edeae4;--paper3:#e3dfd8;
+  --gold:#c8861a;--gold2:#e8a838;--gold-l:#faebd0;
+  --red:#c0392b;--green:#1a6b3c;
+  --mono:'IBM Plex Mono',monospace;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Syne',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(245,242,237,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(10,10,11,.06)}
+.nav-logo{font-family:var(--serif);font-size:22px;letter-spacing:-.02em;color:var(--ink)}
+.nav-logo span{color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:13px;color:#555;text-decoration:none;letter-spacing:.02em;transition:color .15s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{background:var(--ink);color:var(--paper)!important;padding:9px 20px;border-radius:4px;font-size:13px;font-weight:500}
+.hero{min-height:100vh;padding:120px 40px 80px;display:flex;flex-direction:column;justify-content:center;max-width:1100px;margin:0 auto}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:28px;opacity:0;animation:fadeUp .6s .1s forwards}
+.hero h1{font-family:var(--serif);font-size:clamp(48px,7vw,88px);line-height:1.05;letter-spacing:-.02em;max-width:900px;margin-bottom:32px;opacity:0;animation:fadeUp .6s .2s forwards}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:18px;color:#555;max-width:580px;line-height:1.7;margin-bottom:48px;opacity:0;animation:fadeUp .6s .3s forwards}
+.hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;opacity:0;animation:fadeUp .6s .4s forwards}
+.btn-primary{background:var(--ink);color:var(--paper);padding:14px 28px;border-radius:4px;font-size:14px;font-weight:500;text-decoration:none;letter-spacing:.02em;transition:opacity .15s;display:inline-block}
+.btn-primary:hover{opacity:.85}
+.btn-ghost{color:var(--ink);padding:14px 28px;font-size:14px;text-decoration:none;border-bottom:1px solid currentColor;letter-spacing:.02em;transition:opacity .15s}
+.btn-ghost:hover{opacity:.5}
+.hero-note{font-family:var(--mono);font-size:11px;color:#888;letter-spacing:.04em;opacity:0;animation:fadeUp .6s .5s forwards;margin-top:16px}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--paper3);border:1px solid var(--paper3);border-radius:8px;margin-top:80px;overflow:hidden;opacity:0;animation:fadeUp .6s .6s forwards}
+.hstat{background:var(--paper);padding:32px 28px}
+.hstat-n{font-family:var(--serif);font-size:52px;line-height:1;letter-spacing:-.03em;color:var(--ink);margin-bottom:8px}
+.hstat-n.red{color:var(--red)}
+.hstat-n.gold{color:var(--gold)}
+.hstat-l{font-size:13px;color:#666;line-height:1.5}
+.proof{border-top:1px solid var(--paper3);border-bottom:1px solid var(--paper3);padding:20px 0;overflow:hidden;white-space:nowrap;background:var(--paper)}
+.proof-inner{display:inline-flex;gap:60px;animation:scroll 30s linear infinite}
+.proof-item{font-family:var(--mono);font-size:11px;color:#888;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0}
+.proof-item strong{color:var(--ink)}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:20px}
+.problem{padding:120px 40px;max-width:1100px;margin:0 auto}
+.problem h2{font-family:var(--serif);font-size:clamp(36px,5vw,60px);line-height:1.1;letter-spacing:-.02em;max-width:700px;margin-bottom:24px}
+.problem-body{font-size:17px;color:#555;max-width:640px;line-height:1.7;margin-bottom:60px}
+.problem-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.pcard{background:var(--paper2);border:1px solid var(--paper3);border-radius:6px;padding:32px;opacity:0;transition:opacity .5s}
+.pcard.visible{opacity:1}
+.pcard-n{font-family:var(--serif);font-size:48px;letter-spacing:-.03em;margin-bottom:12px}
+.pcard-n.red{color:var(--red)}
+.pcard-n.green{color:var(--green)}
+.pcard-n.gold{color:var(--gold)}
+.pcard-l{font-size:14px;color:#555;line-height:1.6}
+.demo-section{padding:80px 40px;background:var(--ink);overflow:hidden}
+.demo-inner{max-width:1100px;margin:0 auto}
+.demo-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--gold2);text-transform:uppercase;margin-bottom:20px}
+.demo-headline{font-family:var(--serif);font-size:clamp(32px,4vw,52px);color:var(--paper);line-height:1.1;letter-spacing:-.02em;margin-bottom:48px;max-width:600px}
+.demo-screen{background:#111114;border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden;font-family:var(--mono);font-size:12px}
+.demo-bar{background:#1c1c21;padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.demo-dot{width:10px;height:10px;border-radius:50%}
+.demo-url{color:rgba(255,255,255,.3);font-size:11px;margin-left:8px}
+.dtable{width:100%;border-collapse:collapse}
+.dtable th{background:rgba(255,255,255,.04);padding:10px 16px;text-align:left;font-size:10px;letter-spacing:.08em;color:rgba(255,255,255,.3);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06)}
+.dtable td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;color:rgba(255,255,255,.7)}
+.dtable td.loss{color:#e05040}
+.dtable td.ok{color:#3cba7a}
+.dtable td.em{color:rgba(255,255,255,.9)}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-size:10px;letter-spacing:.04em}
+.badge.loss{background:rgba(224,80,64,.15);color:#e05040}
+.badge.ok{background:rgba(60,186,122,.15);color:#3cba7a}
+.sdk-section{padding:120px 40px;max-width:1100px;margin:0 auto}
+.sdk-section h2{font-family:var(--serif);font-size:clamp(36px,5vw,56px);line-height:1.1;letter-spacing:-.02em;margin-bottom:16px}
+.sdk-sub{font-size:17px;color:#555;max-width:560px;line-height:1.7;margin-bottom:60px}
+.sdk-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-bottom:60px}
+.sdk-step{position:relative}
+.sdk-step-n{font-family:var(--serif);font-size:72px;color:var(--paper3);line-height:1;position:absolute;top:-16px;left:-8px;z-index:0;letter-spacing:-.05em}
+.sdk-step-body{position:relative;z-index:1;padding-top:36px}
+.sdk-step-title{font-size:15px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+.sdk-step-desc{font-size:14px;color:#666;line-height:1.6}
+.code-block{background:var(--ink);color:var(--paper);border-radius:6px;padding:28px 32px;font-family:var(--mono);font-size:13px;line-height:1.8;overflow-x:auto;position:relative;white-space:pre}
+.code-block .cm{color:rgba(255,255,255,.3)}
+.code-block .ck{color:#e8a838}
+.code-block .cs{color:#7dd3fc}
+.code-block .cv{color:#86efac}
+.code-copy{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);padding:6px 12px;border-radius:3px;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all .15s}
+.code-copy:hover{background:rgba(255,255,255,.14);color:rgba(255,255,255,.9)}
+.code-copy.copied{color:#3cba7a}
+.features{padding:120px 40px;background:var(--paper2)}
+.features-inner{max-width:1100px;margin:0 auto}
+.features h2{font-family:var(--serif);font-size:clamp(36px,5vw,56px);line-height:1.1;letter-spacing:-.02em;margin-bottom:64px;max-width:600px}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--paper3)}
+.feat{background:var(--paper2);padding:40px;opacity:0;transition:opacity .5s}
+.feat.visible{opacity:1}
+.feat-icon{font-size:28px;margin-bottom:20px;line-height:1}
+.feat-title{font-size:17px;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+.feat-desc{font-size:14px;color:#666;line-height:1.7}
+.feat-tag{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--gold);background:var(--gold-l);padding:3px 8px;border-radius:2px}
+.pricing{padding:120px 40px;max-width:1100px;margin:0 auto}
+.pricing h2{font-family:var(--serif);font-size:clamp(36px,5vw,56px);line-height:1.1;letter-spacing:-.02em;margin-bottom:64px;text-align:center}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.plan{background:var(--paper2);border:1px solid var(--paper3);border-radius:6px;padding:36px}
+.plan.featured{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.plan-name{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;opacity:.6}
+.plan-price{font-family:var(--serif);font-size:52px;letter-spacing:-.03em;line-height:1;margin-bottom:4px}
+.plan-period{font-size:13px;color:#888;margin-bottom:28px}
+.plan.featured .plan-period{color:rgba(255,255,255,.5)}
+.plan-features{list-style:none;margin-bottom:32px}
+.plan-features li{font-size:14px;color:#555;padding:8px 0;border-bottom:1px solid var(--paper3);display:flex;align-items:center;gap:10px;line-height:1.4}
+.plan.featured .plan-features li{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.08)}
+.plan-features li::before{content:'—';color:var(--gold);font-family:var(--mono);font-size:12px;flex-shrink:0}
+.plan-btn{width:100%;padding:12px;border-radius:4px;font-size:14px;font-weight:500;cursor:pointer;text-align:center;text-decoration:none;display:block;letter-spacing:.02em;transition:opacity .15s}
+.plan-btn-outline{background:transparent;border:1px solid var(--ink);color:var(--ink)}
+.plan-btn-outline:hover{opacity:.6}
+.plan-btn-solid{background:var(--paper);color:var(--ink);border:1px solid transparent}
+.plan-btn-solid:hover{opacity:.85}
+.cta-section{padding:140px 40px;text-align:center;background:var(--ink);overflow:hidden;position:relative}
+.cta-section h2{font-family:var(--serif);font-size:clamp(42px,6vw,72px);color:var(--paper);line-height:1.05;letter-spacing:-.02em;margin-bottom:24px}
+.cta-section h2 em{font-style:italic;color:var(--gold2)}
+.cta-sub{font-size:17px;color:rgba(255,255,255,.5);max-width:480px;margin:0 auto 48px;line-height:1.7}
+.cta-actions{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.cta-note{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.04em;margin-top:20px}
+footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.06);padding:40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{font-family:var(--serif);font-size:18px;color:rgba(255,255,255,.4)}
+.footer-logo span{color:var(--gold)}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-links a{font-size:12px;color:rgba(255,255,255,.3);text-decoration:none;letter-spacing:.04em;transition:color .15s}
+.footer-links a:hover{color:rgba(255,255,255,.7)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@media(max-width:768px){
+  nav{padding:14px 20px}.nav-links a:not(.nav-cta){display:none}
+  .hero,.problem,.sdk-section,.pricing{padding-left:20px;padding-right:20px}
+  .hero-stats,.problem-cards,.sdk-steps,.feat-grid,.pricing-grid{grid-template-columns:1fr}
+  .demo-section,.features{padding-left:20px;padding-right:20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Meridian<span>.</span></div>
+  <div class="nav-links">
+    <a href="#problem">The problem</a>
+    <a href="#sdk">SDK</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="/app" class="nav-cta">Open dashboard →</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">AI margin intelligence · v8.3</div>
+  <h1>You're probably losing money on <em>40% of your Pro users.</em></h1>
+  <p class="hero-sub">Meridian shows you which AI users cost more than they pay, why your margins are negative, and exactly what to charge to fix it.</p>
+  <div class="hero-actions">
+    <a href="/app" class="btn-primary">Start free — first insight in 90s</a>
+    <a href="#sdk" class="btn-ghost">See the SDK</a>
+  </div>
+  <div class="hero-note">No credit card · Free forever for 3 features · pip install meridian-sdk</div>
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="hstat-n">$41</div>
+      <div class="hstat-l">Average monthly AI cost for a power user on a $18/mo Pro plan</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-n red">−128%</div>
+      <div class="hstat-l">Gross margin on that user. You're spending $2.28 in AI for every $1 they pay.</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-n gold">90s</div>
+      <div class="hstat-l">To see your own numbers. Connect Stripe + provider key. No code deploy needed.</div>
+    </div>
+  </div>
+</section>
+
+<div class="proof">
+  <div class="proof-inner">
+    <span class="proof-item">Works with <strong>Anthropic</strong></span>
+    <span class="proof-item">Works with <strong>OpenAI</strong></span>
+    <span class="proof-item">Works with <strong>Google Gemini</strong></span>
+    <span class="proof-item">Syncs with <strong>Stripe</strong></span>
+    <span class="proof-item">Zero extra <strong>latency</strong></span>
+    <span class="proof-item">Deploys on <strong>Railway</strong></span>
+    <span class="proof-item">Works with <strong>Anthropic</strong></span>
+    <span class="proof-item">Works with <strong>OpenAI</strong></span>
+    <span class="proof-item">Works with <strong>Google Gemini</strong></span>
+    <span class="proof-item">Syncs with <strong>Stripe</strong></span>
+    <span class="proof-item">Zero extra <strong>latency</strong></span>
+    <span class="proof-item">Deploys on <strong>Railway</strong></span>
+  </div>
+</div>
+
+<section class="problem" id="problem">
+  <div class="section-label">The problem</div>
+  <h2>Other tools show you the damage. Meridian stops it.</h2>
+  <p class="problem-body">Dashboards that show you which users are unprofitable are useful. But they stop at the report. Meridian connects the insight to action — routing rules that automatically switch loss-making users to cheaper models, hard budget caps that enforce before the overage hits, pricing simulations grounded in your actual token costs.</p>
+  <div class="problem-cards">
+    <div class="pcard">
+      <div class="pcard-n red">$41</div>
+      <div class="pcard-l"><strong>Alice pays $18/mo.</strong> Her AI chat feature cost you $41 in Claude tokens this month. She's not a power user — she's your biggest expense. You have no idea.</div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-n green">82%</div>
+      <div class="pcard-l"><strong>Eve pays $49/mo.</strong> She used $8.40 in AI this month. 82% gross margin. She's your most profitable customer. You're treating her exactly like Alice.</div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-n gold">auto</div>
+      <div class="pcard-l"><strong>Meridian routes Alice automatically.</strong> When she hits 80% of her plan cost, a routing rule switches her to Haiku. Margin restored. No code change. No manual intervention.</div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--ink);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);padding:64px 40px;max-width:100%">
+  <div style="max-width:900px;margin:0 auto">
+    <div style="font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#888;margin-bottom:20px">Dashboard vs. control plane</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+      <div style="padding:28px;border:1px solid rgba(255,255,255,.1);border-radius:8px">
+        <div style="font-family:var(--mono);font-size:11px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:.1em">Other margin tools</div>
+        <ul style="list-style:none;padding:0;font-size:14px;color:#888;line-height:2">
+          <li>✓ &nbsp;Show you which users are unprofitable</li>
+          <li>✓ &nbsp;Track cost per customer</li>
+          <li>✓ &nbsp;Stripe sync</li>
+          <li style="color:#555">✗ &nbsp;Can't act on it</li>
+          <li style="color:#555">✗ &nbsp;No routing rules</li>
+          <li style="color:#555">✗ &nbsp;No budget enforcement</li>
+          <li style="color:#555">✗ &nbsp;No model swap automation</li>
+        </ul>
+      </div>
+      <div style="padding:28px;border:1px solid rgba(232,168,56,.4);border-radius:8px;background:rgba(232,168,56,.04)">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:.1em">Meridian</div>
+        <ul style="list-style:none;padding:0;font-size:14px;color:#ccc;line-height:2">
+          <li>✓ &nbsp;Show you which users are unprofitable</li>
+          <li>✓ &nbsp;Track cost per customer</li>
+          <li>✓ &nbsp;Stripe sync</li>
+          <li style="color:var(--gold)">✓ &nbsp;Routing rules that act automatically</li>
+          <li style="color:var(--gold)">✓ &nbsp;Hard budget caps per feature</li>
+          <li style="color:var(--gold)">✓ &nbsp;Model swap with one click</li>
+          <li style="color:var(--gold)">✓ &nbsp;Saves the margin, not just reports it</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="demo-section">
+  <div class="demo-inner">
+    <div class="demo-label">Live dashboard</div>
+    <h2 class="demo-headline">Every user. Real AI cost. Real margin. No estimates.</h2>
+    <div class="demo-screen">
+      <div class="demo-bar">
+        <div class="demo-dot" style="background:#e05040"></div>
+        <div class="demo-dot" style="background:#e8a838"></div>
+        <div class="demo-dot" style="background:#3cba7a"></div>
+        <div class="demo-url">meridianvisual.io/app · Users & Profitability</div>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>User</th><th>Plan</th><th>AI cost / mo</th><th>Revenue</th><th>Margin</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="em">alice@example.com</td><td>Pro</td><td class="loss">$41.20</td><td>$18.00</td><td class="loss">−128.9%</td><td><span class="badge loss">loss</span></td></tr>
+          <tr><td class="em">bob@example.com</td><td>Pro</td><td class="loss">$38.50</td><td>$18.00</td><td class="loss">−113.9%</td><td><span class="badge loss">loss</span></td></tr>
+          <tr><td class="em">carol@example.com</td><td>Growth</td><td>$22.10</td><td>$49.00</td><td class="ok">55.1%</td><td><span class="badge ok">ok</span></td></tr>
+          <tr><td class="em">dave@example.com</td><td>Pro</td><td class="loss">$19.80</td><td>$18.00</td><td class="loss">−10.0%</td><td><span class="badge loss">loss</span></td></tr>
+          <tr><td class="em">eve@example.com</td><td>Growth</td><td>$8.40</td><td>$49.00</td><td class="ok">82.9%</td><td><span class="badge ok">ok</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="sdk-section" id="sdk">
+  <div class="section-label">SDK · 2-minute setup</div>
+  <h2>One line. That's it.</h2>
+  <p class="sdk-sub">Wrap your existing Anthropic or OpenAI client. Every call is automatically timed, costed, and attributed — in a background thread that adds zero latency to your app.</p>
+  <div class="sdk-steps">
+    <div class="sdk-step">
+      <div class="sdk-step-n">1</div>
+      <div class="sdk-step-body">
+        <div class="sdk-step-title">Install</div>
+        <div class="sdk-step-desc">One package. Zero dependencies. Python 3.9+.</div>
+      </div>
+    </div>
+    <div class="sdk-step">
+      <div class="sdk-step-n">2</div>
+      <div class="sdk-step-body">
+        <div class="sdk-step-title">Wrap your client</div>
+        <div class="sdk-step-desc">Change one line. Streaming, async, retries — all stay identical.</div>
+      </div>
+    </div>
+    <div class="sdk-step">
+      <div class="sdk-step-n">3</div>
+      <div class="sdk-step-body">
+        <div class="sdk-step-title">See your margins</div>
+        <div class="sdk-step-desc">Live per-user, per-feature gross margin. Real-time. No deploy needed.</div>
+      </div>
+    </div>
+  </div>
+  <div class="code-block"><button class="code-copy" onclick="copyCode(this)">copy</button><span class="cm"># 1. Install</span>
+pip install meridian-sdk
+
+<span class="cm"># 2. Wrap your client — one line change</span>
+<span class="ck">from</span> <span class="cs">meridian_sdk</span> <span class="ck">import</span> MeridianProxy
+<span class="ck">import</span> anthropic
+
+<span class="cm"># Before: client = anthropic.Anthropic()</span>
+client = <span class="cs">MeridianProxy</span>(
+    anthropic.<span class="cs">Anthropic</span>(),
+    api_key=<span class="cv">"mrd_your_key_here"</span>,
+    feature=<span class="cv">"ai-chat"</span>,       <span class="cm"># maps to Feature Margins view</span>
+    user_id=req.user.id     <span class="cm"># maps to per-user profitability</span>
+)
+
+<span class="cm"># 3. Use exactly as before — nothing else changes</span>
+msg = client.messages.create(
+    model=<span class="cv">"claude-sonnet-4-6"</span>,
+    max_tokens=<span class="cv">1024</span>,
+    messages=[{<span class="cv">"role"</span>: <span class="cv">"user"</span>, <span class="cv">"content"</span>: prompt}]
+)
+<span class="cm"># Cost recorded in background. Zero latency added.</span></div>
+  <div style="margin-top:12px;font-family:var(--mono);font-size:12px;color:#888">Also works with <strong style="color:#555">openai.OpenAI()</strong> — same wrapper, same one-line change.</div>
+</section>
+
+<section class="features" id="features">
+  <div class="features-inner">
+    <div class="section-label">What you get</div>
+    <h2>Everything your AI business needs to stop guessing.</h2>
+    <div class="feat-grid">
+      <div class="feat"><div class="feat-icon">◎</div><div class="feat-title">Margin Signal</div><div class="feat-desc">Your AI gross margin, live, every morning. One number that tells you whether your AI business model is working. Breaks down by feature, by user cohort, by model.</div><div class="feat-tag">Free tier</div></div>
+      <div class="feat"><div class="feat-icon">◈</div><div class="feat-title">Feature Margins</div><div class="feat-desc">Gross margin per product feature. AI Chat: −42%. Code Review: +61%. Know which features are subsidising which before your runway gets shorter.</div><div class="feat-tag">Free tier</div></div>
+      <div class="feat"><div class="feat-icon">◉</div><div class="feat-title">User Profitability</div><div class="feat-desc">Every user, ranked by margin. See exactly who costs you money and why. Filter by loss-making users and trigger routing rules for your top spenders.</div><div class="feat-tag">Pro</div></div>
+      <div class="feat"><div class="feat-icon">◧</div><div class="feat-title">Pricing Simulator</div><div class="feat-desc">Enter a new price point and see the exact margin impact. Grounded in your actual token costs and Stripe revenue — not a spreadsheet guess.</div><div class="feat-tag">Free tier</div></div>
+      <div class="feat"><div class="feat-icon">↔</div><div class="feat-title">Model Swap</div><div class="feat-desc">See what your current traffic volume would cost on every supported model — Haiku, GPT-4o mini, Gemini Flash. One click applies it as a routing rule. No code change. Typical saving: 40–70%.</div><div class="feat-tag">Pro</div></div>
+      <div class="feat"><div class="feat-icon">▣</div><div class="feat-title">Smart Routing</div><div class="feat-desc">Route heavy users to cheaper models automatically. When a user hits 80% of their budget, switch from Sonnet to Haiku mid-session. Keeps margin positive without breaking UX.</div><div class="feat-tag">Pro</div></div>
+      <div class="feat"><div class="feat-icon">◪</div><div class="feat-title">Budget Enforcement</div><div class="feat-desc">Hard caps, soft caps, alert-only budgets per feature. Set a monthly ceiling, get an email at 80%, auto-fallback at 100%. Never get blindsided by a spike again.</div><div class="feat-tag">Pro</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="section-label" style="text-align:center;margin-bottom:12px">Pricing</div>
+  <h2>Simple. Scales with you.</h2>
+  <div class="pricing-grid">
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0</div>
+      <div class="plan-period">forever</div>
+      <ul class="plan-features">
+        <li>Up to 3 features</li>
+        <li>Margin Signal dashboard</li>
+        <li>Pricing Simulator</li>
+        <li>1 API key</li>
+        <li>90-day data retention</li>
+      </ul>
+      <a href="/app" class="plan-btn plan-btn-outline">Get started free</a>
+    </div>
+    <div class="plan featured">
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$49</div>
+      <div class="plan-period">/ month</div>
+      <ul class="plan-features">
+        <li>Up to 20 features</li>
+        <li>Per-user profitability</li>
+        <li>Smart routing rules</li>
+        <li>Budget enforcement</li>
+        <li>Stripe sync</li>
+        <li>5 API keys</li>
+        <li>Unlimited data retention</li>
+      </ul>
+      <a href="/app" class="plan-btn plan-btn-solid">Start Pro free trial</a>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Scale</div>
+      <div class="plan-price">$199</div>
+      <div class="plan-period">/ month</div>
+      <ul class="plan-features">
+        <li>Unlimited features</li>
+        <li>Everything in Pro</li>
+        <li>20 API keys</li>
+        <li>Custom ingest URL</li>
+        <li>SSO / team seats</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="mailto:hello@meridianvisual.io" class="plan-btn plan-btn-outline">Talk to us</a>
+    </div>
+  </div>
+  <div style="margin-top:24px;padding:20px 28px;border:1px solid rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:space-between;max-width:760px;margin-left:auto;margin-right:auto">
+    <div>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Scale+ · usage-based</div>
+      <div style="font-size:15px;color:#ccc">Tracking <strong style="color:white">more than $10k of AI spend / month?</strong> We offer a usage-aligned tier — 0.1% of AI spend tracked, with volume pricing and a dedicated account. The product pays for itself on day one.</div>
+    </div>
+    <a href="mailto:hello@meridianvisual.io?subject=Scale+ pricing" style="flex-shrink:0;margin-left:24px;padding:10px 20px;background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:5px;font-size:13px;text-decoration:none;white-space:nowrap">Talk to us →</a>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Your margins are telling you something.<br><em>Are you listening?</em></h2>
+  <p class="cta-sub">Connect your LLM provider and Stripe. First margin number in 90 seconds. No code deploy required.</p>
+  <div class="cta-actions">
+    <a href="/app" class="btn-primary" style="background:var(--gold2);color:var(--ink)">Start free →</a>
+    <a href="#sdk" class="btn-ghost" style="color:var(--paper);border-color:rgba(255,255,255,.3)">See the SDK</a>
+  </div>
+  <div class="cta-note">pip install meridian-sdk · Free forever for 3 features · No credit card</div>
+</section>
+
+<footer>
+  <div class="footer-logo">Meridian<span>.</span></div>
+  <div class="footer-links">
+    <a href="/app">Dashboard</a>
+    <a href="#sdk">SDK docs</a>
+    <a href="#pricing">Pricing</a>
+    <a href="mailto:hello@meridianvisual.io">Contact</a>
+  </div>
+</footer>
+
+<script>
+function copyCode(btn) {
+  const block = btn.closest('.code-block');
+  const clone = block.cloneNode(true);
+  clone.querySelectorAll('button').forEach(b => b.remove());
+  const text = clone.innerText.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.pcard,.feat').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

@@ -1,1 +1,1 @@
-web: uvicorn backend.indexv8.3.2:app --host 0.0.0.0 --port $PORT
+web: uvicorn backend.indexv8_3_2:app --host 0.0.0.0 --port $PORT
