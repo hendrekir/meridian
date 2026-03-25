@@ -15,14 +15,14 @@ cd backend && uvicorn indexv8.3:app --reload
 ```
 meridian/
 ├── backend/
-│   ├── indexv8.3.py          ← FastAPI app (main entry point)
-│   ├── modelsv8.3.py         ← SQLAlchemy models
-│   ├── databasev8.3.py       ← DB engine + session
-│   ├── authv8.3.py           ← JWT + Clerk JWKS + password hashing
-│   ├── analyticsv8.3.py      ← All read queries
-│   ├── proxyv8.3.py          ← Routing rules, wallet, transaction recording
-│   ├── encryptionv8.3.py     ← Fernet encryption for stored API keys
-│   ├── email_servicev8.3.py  ← Resend transactional emails
+│   ├── indexv8.3.2.py          ← FastAPI app (main entry point)
+│   ├── modelsv8.3.2.py         ← SQLAlchemy models
+│   ├── databasev8.3.2.py       ← DB engine + session
+│   ├── authv8.3.2.py           ← JWT + Clerk JWKS + password hashing
+│   ├── analyticsv8.3.2.py      ← All read queries
+│   ├── proxyv8.3.2.py          ← Routing rules, wallet, transaction recording
+│   ├── encryptionv8.3.2.py     ← Fernet encryption for stored API keys
+│   ├── email_servicev8.3.2.py  ← Resend transactional emails
 │   └── requirementsv8.3.txt
 ├── frontend/
 │   └── indexv8.3.html        ← Single-file frontend

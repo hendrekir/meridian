@@ -19,11 +19,11 @@
     },
     {
       "src": "/app(.*)",
-      "dest": "/frontend/indexv8.3.1.html"
+      "dest": "/frontend/indexv8.3.2.html"
     },
     {
       "src": "/",
-      "dest": "/landing/indexv8.3.1.html"
+      "dest": "/landing/indexv8.3.2.html"
     }
   ]
 }
