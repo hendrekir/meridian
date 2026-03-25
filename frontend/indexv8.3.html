@@ -327,7 +327,7 @@ select option{background:var(--bg3)}
     <div class="sb-footer">
       <div class="sb-ws" id="ws-name">Loading…</div>
       <div id="demo-badge" style="display:none;align-items:center;gap:5px;margin-top:4px;font-family:var(--mono);font-size:9px;color:var(--amber);background:var(--amber-dim);padding:3px 7px;border-radius:3px;letter-spacing:.06em">⚡ DEMO — <span onclick="document.getElementById('auth-screen').style.cssText=''" style="cursor:pointer;text-decoration:underline">sign in</span></div>
-      <div class="sb-plan" id="sb-plan-label">Free plan</div>
+      <div class="sb-plan">Pro · $149/mo</div>
       <div class="sb-out" onclick="logout()">Sign out</div>
     </div>
   </aside>
@@ -824,11 +824,7 @@ async function api(method, path, body) {
     const h = {'Content-Type':'application/json', 'Authorization':'Bearer '+tok};
     const r = await fetch(API+path, {method, headers:h, body:body?JSON.stringify(body):undefined});
     if (r.status === 401) { logout(); return null; }
-    if (r.status === 402) {
-      const e = await r.json().catch(()=>({detail:'Upgrade required'}));
-      showUpgradeModal(e.detail || 'This feature requires a Pro plan.');
-      return null;
-    }
+    if (r.status === 402) { const e = await r.json().catch(()=>({detail:'Upgrade required'})); showUpgradeModal(e.detail||'This feature requires a Pro plan.'); return null; }
     if (!r.ok) { const e = await r.json().catch(()=>({detail:r.statusText})); showErr(e.detail||'Error'); return null; }
     return r.json();
   } catch(e) {
@@ -943,7 +939,7 @@ const viewMeta = {
   customers:['Users & Profitability','Which users make money and which are costing you'],
   pricing:  ['Pricing Simulator',    'What to charge — grounded in your actual cost structure'],
   features: ['Feature Margins',      'Gross margin per product feature — where revenue is leaking'],
-  spend:    ['Cost Architecture',    'Where the AI budget went and what it's costing by month'],
+  spend:    ['Cost Architecture',    'Where the AI budget went and what it costs by month'],
   digest:   ['Weekly Digest',        'Your margin vs industry — every Monday, one number, three actions'],
   investor: ['Investor Report',      'Board-ready AI unit economics — one click, fully sourced'],
   controls: ['Spend Caps & Rules',   'Budget enforcement, model routing, and wallet policy'],
@@ -1044,7 +1040,7 @@ function renderSignal(d) {
   if (d.ai_cost_mtd > 500) acts.push({
     p:'P1', t:'1 line of code',
     title: 'Prompt caching is likely off — costing ~$'+fmt(d.ai_cost_mtd*0.15)+'/mo',
-    desc:  "Anthropic caches repeated system prompt content at 90% discount. If your system prompt isn't marked cache_control, you pay full price on every call. One change, zero quality impact.",
+    desc:  "Anthropic caches repeated system prompt content at 90% discount. If your system prompt is not marked cache_control, you pay full price on every call. One change, zero quality impact.",
     proof: 'Estimated monthly waste: $'+fmt(d.ai_cost_mtd*0.15)+' — fix: one cache_control block',
     impact:'+$'+fmt(d.ai_cost_mtd*0.15),
     act:"switchView('connect')", aL:'See implementation →', sec:null
@@ -1820,7 +1816,7 @@ document.getElementById('reset-modal').addEventListener('click', function(e) {
   window.addEventListener('load', function() {
     const modal = document.getElementById('reset-modal');
     if (!modal) return;
-    modal.innerHTML = `
+    modal.innerHTML = \`
       <div style="background:var(--bg2);border:1px solid var(--b);border-radius:8px;padding:32px;width:360px;max-width:90vw">
         <h3 style="margin:0 0 8px;font-size:16px;color:var(--t1)">Set new password</h3>
         <input id="np1" type="password" placeholder="New password (8+ chars)"
@@ -1829,7 +1825,7 @@ document.getElementById('reset-modal').addEventListener('click', function(e) {
           style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--bg3);border:1px solid var(--b);border-radius:4px;color:var(--t1);font-size:13px;margin-bottom:12px">
         <div id="npr-msg" style="font-size:12px;color:#e05040;min-height:18px;margin-bottom:8px"></div>
         <button onclick="confirmReset()" style="width:100%;padding:10px;background:var(--gold);color:#111;border:none;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">Set password</button>
-      </div>`;
+      </div>\`;
     modal.style.display = 'flex';
   });
   window.confirmReset = async function() {
@@ -1915,22 +1911,71 @@ window.addEventListener('load', function() { if (document.getElementById('qe-pri
         <div style="font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.08em;margin-bottom:6px">PRO</div>
         <div style="font-family:var(--display);font-size:28px;font-weight:700;color:var(--t1)">$49</div>
         <div style="font-size:11px;color:var(--t3);margin-bottom:12px">/month</div>
-        <div style="font-size:11px;color:var(--t2);line-height:1.7">Per-user profitability<br>Smart routing rules<br>Budget enforcement<br>20 features · 5 API keys</div>
-        <button onclick="startCheckout('pro')" style="width:100%;margin-top:14px;padding:10px;background:var(--gold);color:var(--bg);border:none;border-radius:5px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)">Upgrade to Pro →</button>
+        <div style="font-size:11px;color:var(--t2);line-height:1.7">Per-user profitability<br>Smart routing rules<br>Budget enforcement<br>20 features</div>
+        <button onclick="startCheckout('pro')" style="width:100%;margin-top:14px;padding:10px;background:var(--gold);color:var(--bg);border:none;border-radius:5px;font-size:13px;font-weight:600;cursor:pointer">Upgrade to Pro →</button>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--rule2);border-radius:8px;padding:16px;text-align:center">
         <div style="font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.08em;margin-bottom:6px">SCALE</div>
         <div style="font-family:var(--display);font-size:28px;font-weight:700;color:var(--t1)">$199</div>
         <div style="font-size:11px;color:var(--t3);margin-bottom:12px">/month</div>
-        <div style="font-size:11px;color:var(--t2);line-height:1.7">Everything in Pro<br>Unlimited features<br>20 API keys · SSO<br>Priority support</div>
-        <button onclick="startCheckout('scale')" style="width:100%;margin-top:14px;padding:10px;background:transparent;color:var(--t2);border:1px solid var(--rule2);border-radius:5px;font-size:13px;cursor:pointer;font-family:var(--sans)">Upgrade to Scale</button>
+        <div style="font-size:11px;color:var(--t2);line-height:1.7">Everything in Pro<br>Unlimited features<br>20 API keys<br>Priority support</div>
+        <button onclick="startCheckout('scale')" style="width:100%;margin-top:14px;padding:10px;background:transparent;color:var(--t2);border:1px solid var(--rule2);border-radius:5px;font-size:13px;cursor:pointer">Upgrade to Scale</button>
       </div>
     </div>
-    <button onclick="hideUpgradeModal()" style="font-size:12px;color:var(--t4);background:none;border:none;cursor:pointer;font-family:var(--mono)">Maybe later</button>
+    <button onclick="hideUpgradeModal()" style="font-size:12px;color:var(--t4);background:none;border:none;cursor:pointer">Maybe later</button>
   </div>
 </div>
 
 <script>
+/* ── MODEL COMPARISON ── */
+async function loadComparison() {
+  vis('cl'); hide('ccon'); hide('c-empty2');
+  const DEMO_CMP = {
+    total_current:4820,
+    alternatives:[
+      {model_id:'claude-sonnet-4-6',display:'Claude Sonnet 4',provider:'anthropic',monthly_cost:4820,saving:0,saving_pct:0,is_current:true,input_per_1k:0.003,output_per_1k:0.015},
+      {model_id:'claude-haiku-4-5-20251001',display:'Claude Haiku 4',provider:'anthropic',monthly_cost:1546,saving:3274,saving_pct:67.9,is_current:false,input_per_1k:0.00025,output_per_1k:0.00125},
+      {model_id:'gemini-2.0-flash',display:'Gemini 2.0 Flash',provider:'google',monthly_cost:463,saving:4357,saving_pct:90.4,is_current:false,input_per_1k:0.000075,output_per_1k:0.0003},
+      {model_id:'gpt-4o-mini',display:'GPT-4o mini',provider:'openai',monthly_cost:928,saving:3892,saving_pct:80.7,is_current:false,input_per_1k:0.00015,output_per_1k:0.0006},
+      {model_id:'gpt-4o',display:'GPT-4o',provider:'openai',monthly_cost:15463,saving:-10643,saving_pct:-220.8,is_current:false,input_per_1k:0.0025,output_per_1k:0.01},
+      {model_id:'claude-opus-4-6',display:'Claude Opus 4',provider:'anthropic',monthly_cost:92700,saving:-87880,saving_pct:-1822,is_current:false,input_per_1k:0.015,output_per_1k:0.075},
+    ]
+  };
+  const d = await GET('/api/workspaces/'+wsId+'/spend/model-comparison?days=30') || DEMO_CMP;
+  hide('cl');
+  if (!d || !d.alternatives || !d.alternatives.length) { vis('c-empty2','flex'); return; }
+  vis('ccon');
+  const best = d.alternatives.filter(a => !a.is_current && a.saving > 0).sort((a,b)=>b.saving-a.saving)[0];
+  document.getElementById('csummary').innerHTML = best
+    ? '<div class="banner ok"><span class="banner-icon">↔</span><div>Swapping to <strong>'+best.display+'</strong> would save <strong>$'+fmt(best.saving)+'/mo</strong> ('+best.saving_pct+'% cheaper). Apply as a routing rule — no code changes needed.</div><button class="btn primary" style="flex-shrink:0;margin-left:12px" onclick="applyModelSwap(\''+best.model_id+'\',\''+best.display+'\')">Apply rule →</button></div>'
+    : '';
+  document.getElementById('ctbody2').innerHTML = d.alternatives.map(a => {
+    const cheaper = a.saving > 0;
+    const costCol = a.is_current ? 'var(--t1)' : cheaper ? 'var(--green)' : 'var(--red)';
+    const savStr  = a.is_current ? '<span class="chip neu">current</span>' : cheaper ? '<span class="tg">-$'+fmt(a.saving)+'/mo</span>' : '<span class="tr">+$'+fmt(Math.abs(a.saving))+'/mo</span>';
+    const pctStr  = a.is_current ? '-' : cheaper ? '<span class="tg">'+a.saving_pct+'% cheaper</span>' : '<span class="tr">'+Math.abs(a.saving_pct)+'% more</span>';
+    const action  = a.is_current ? '<span class="td">-</span>' : cheaper ? '<button class="btn" onclick="applyModelSwap(\''+a.model_id+'\',\''+a.display+'\')">Apply rule</button>' : '<span class="td" style="font-size:11px;color:var(--t4)">more expensive</span>';
+    return '<tr style="'+(a.is_current?'background:var(--bg2)':'')+'">'
+      +'<td><span class="tn">'+a.display+'</span>'+(a.is_current?' <span class="chip ok" style="font-size:9px">IN USE</span>':'')+'</td>'
+      +'<td class="td">'+a.provider+'</td>'
+      +'<td style="font-family:var(--mono);font-size:13px;color:'+costCol+'">$'+fmt(a.monthly_cost)+'</td>'
+      +'<td>'+savStr+'</td><td>'+pctStr+'</td>'
+      +'<td class="td">$'+a.input_per_1k+'</td><td class="td">$'+a.output_per_1k+'</td>'
+      +'<td>'+action+'</td></tr>';
+  }).join('');
+}
+
+async function applyModelSwap(modelId, displayName) {
+  if (!confirm('Create routing rule to route all traffic to '+displayName+'?\n\nThis adds a rule — your existing code stays unchanged.')) return;
+  const r = await POST('/api/workspaces/'+wsId+'/routing-rules', {
+    name:'Model swap to '+displayName,
+    priority:10,
+    trigger:{type:'always'},
+    action:{type:'route', model:modelId}
+  });
+  if (r) { alert('Routing rule created.'); switchView('controls'); }
+}
+
 /* ── UPGRADE MODAL ── */
 function showUpgradeModal(reason) {
   document.getElementById('upgrade-reason').textContent = reason || 'This feature requires a Pro plan.';
@@ -1939,73 +1984,54 @@ function showUpgradeModal(reason) {
 function hideUpgradeModal() {
   document.getElementById('upgrade-modal').style.display = 'none';
 }
-document.getElementById('upgrade-modal').addEventListener('click', function(e) {
-  if (e.target === this) hideUpgradeModal();
-});
+document.getElementById('upgrade-modal').addEventListener('click', function(e) { if (e.target===this) hideUpgradeModal(); });
 
 async function startCheckout(plan) {
   const btn = event.target;
-  btn.textContent = 'Loading…'; btn.disabled = true;
-  try {
-    const d = await POST('/api/workspaces/'+wsId+'/checkout', {
-      plan,
-      success_url: window.location.origin + '/app?upgraded=1&plan=' + plan,
-      cancel_url:  window.location.origin + '/app?upgrade=cancelled',
-    });
-    if (d && d.checkout_url) {
-      window.location.href = d.checkout_url;
-    } else {
-      btn.textContent = plan === 'pro' ? 'Upgrade to Pro →' : 'Upgrade to Scale';
-      btn.disabled = false;
-    }
-  } catch(e) {
-    btn.textContent = 'Error — try again';
-    btn.disabled = false;
-  }
+  const orig = btn.textContent;
+  btn.textContent = 'Loading...'; btn.disabled = true;
+  const d = await POST('/api/workspaces/'+wsId+'/checkout', {
+    plan,
+    success_url: window.location.origin+'/app?upgraded=1&plan='+plan,
+    cancel_url:  window.location.origin+'/app',
+  });
+  if (d && d.checkout_url) { window.location.href = d.checkout_url; }
+  else { btn.textContent = orig; btn.disabled = false; }
 }
 
-/* ── POST-UPGRADE HANDLER ── */
-(function() {
-  const p = new URLSearchParams(window.location.search);
-  if (p.get('upgraded') === '1') {
-    const plan = p.get('plan') || 'pro';
-    window.addEventListener('load', function() {
-      setTimeout(() => {
-        showErr('');
-        // Show success banner
-        const b = document.createElement('div');
-        b.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--green-bg);border:1px solid var(--green);border-radius:6px;padding:12px 20px;font-family:var(--mono);font-size:12px;color:var(--green);z-index:9999;animation:su .2s ease';
-        b.textContent = '✓ Upgraded to ' + plan.charAt(0).toUpperCase() + plan.slice(1) + ' — welcome to the full product.';
-        document.body.appendChild(b);
-        setTimeout(() => b.remove(), 5000);
-        // Clean URL
-        window.history.replaceState({}, '', '/app');
-      }, 800);
-    });
-  }
-})();
-
-/* ── SIDEBAR PLAN DISPLAY ── */
+/* ── SIDEBAR PLAN ── */
 function updateSidebarPlan(plan) {
   const el = document.querySelector('.sb-plan');
   if (!el) return;
-  const labels = { free: 'Free plan', pro: 'Pro · $49/mo', scale: 'Scale · $199/mo' };
+  const labels = {free:'Free plan', pro:'Pro · $49/mo', scale:'Scale · $199/mo'};
   el.textContent = labels[plan] || plan;
-  if (plan === 'free') el.style.color = 'var(--t4)';
-  else el.style.color = 'var(--gold)';
-  // Show upgrade prompt in sidebar if on free
+  el.style.color = plan==='free' ? 'var(--t4)' : 'var(--gold)';
   const existing = document.getElementById('sb-upgrade-btn');
-  if (plan === 'free' && !existing) {
+  if (plan==='free' && !existing) {
     const btn = document.createElement('div');
     btn.id = 'sb-upgrade-btn';
     btn.onclick = () => showUpgradeModal('Unlock per-user profitability, routing rules, and budget enforcement.');
-    btn.style.cssText = 'margin-top:8px;padding:6px 10px;background:var(--gold-dim);border:1px solid rgba(232,168,56,.2);border-radius:4px;font-family:var(--mono);font-size:10px;color:var(--gold);cursor:pointer;letter-spacing:.04em;text-align:center';
-    btn.textContent = '⬆ Upgrade to Pro';
+    btn.style.cssText = 'margin-top:8px;padding:6px 10px;background:var(--gold-dim);border:1px solid rgba(232,168,56,.2);border-radius:4px;font-family:var(--mono);font-size:10px;color:var(--gold);cursor:pointer;text-align:center';
+    btn.textContent = 'Upgrade to Pro';
     el.parentNode.appendChild(btn);
-  } else if (plan !== 'free' && existing) {
-    existing.remove();
-  }
+  } else if (plan!=='free' && existing) { existing.remove(); }
 }
+
+/* ── POST-UPGRADE BANNER ── */
+(function(){
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('upgraded')==='1') {
+    const plan = p.get('plan')||'pro';
+    setTimeout(()=>{
+      const b = document.createElement('div');
+      b.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--green-bg);border:1px solid var(--green);border-radius:6px;padding:12px 20px;font-family:var(--mono);font-size:12px;color:var(--green);z-index:9999';
+      b.textContent = 'Upgraded to '+plan.charAt(0).toUpperCase()+plan.slice(1)+' — welcome.';
+      document.body.appendChild(b);
+      setTimeout(()=>b.remove(), 5000);
+      window.history.replaceState({},'',' /app');
+    }, 1000);
+  }
+})();
 </script>
 </body>
 </html>
