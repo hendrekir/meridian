@@ -2,7 +2,7 @@
 nixPkgs = ["python311", "gcc"]
 
 [phases.install]
-cmds = ["python3.11 -m pip install -r backend/requirementsv8_3_5.txt"]
+cmds = ["python3.11 -m pip install -r backend/requirementsv8_3_6.txt"]
 
 [phases.build]
 cmds = []

@@ -1,8 +1,7 @@
 FROM python:3.11-slim
-ENV PYTHONUNBUFFERED=1
 WORKDIR /app
-COPY backend/requirementsv8_3_5.txt requirements.txt
+COPY backend/requirementsv8_3_6.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-SHELL ["/bin/sh", "-c"]
-CMD uvicorn app:app --host 0.0.0.0 --port $PORT
+ENTRYPOINT ["uvicorn", "app:app", "--host", "0.0.0.0"]
+CMD ["--port", "8080"]

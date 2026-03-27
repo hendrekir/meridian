@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meridian v8_3_5 — AI Margin Intelligence</title>
+<title>Meridian v8_3_6 — AI Margin Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script async crossorigin="anonymous" data-clerk-publishable-key="pk_live_Y2xlcmsubWVyaWRpYW52aXN1YWwuaW8k" src="https://clerk.meridianvisual.io/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
@@ -677,9 +677,9 @@ select option{background:var(--bg3)}
   <div class="ss">
     <div class="ss-num">1</div>
     <div class="ss-body">
-      <div class="ss-title">Connect LLM providers — import your cost history, no code required</div>
-      <div class="ss-desc">Paste your API keys. Meridian pulls historical spend immediately — Cost Breakdown and Feature Margins populate within seconds. No SDK, no deploy, no waiting.</div>
-      <div id="p-list" class="pg" style="grid-template-columns:repeat(6,1fr);margin-bottom:10px"></div>
+      <div class="ss-title">Connect LLM providers — validate key, then import history via CSV</div>
+      <div class="ss-desc">Paste your API key. Meridian validates it immediately and confirms which models it can access. To import historical spend, download your usage CSV from the provider dashboard and upload it below — this populates Cost Breakdown and Feature Margins with real data going back months.</div>
+      <div id="p-list" class="pg" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px"></div>
       <button class="btn" onclick="showAddProvider()">+ Add provider</button>
     </div>
   </div>
@@ -1610,26 +1610,126 @@ async function loadDigest() {
 }
 
 /* ─── CONNECT ─── */
+const PROVIDER_LABELS = {anthropic:'Anthropic',openai:'OpenAI',google:'Google',mistral:'Mistral',openrouter:'OpenRouter',cohere:'Cohere'};
+const PROVIDER_CSV_HELP = {
+  openai:    'platform.openai.com → Usage → Export CSV',
+  anthropic: 'console.anthropic.com → Usage → Export',
+  google:    'console.cloud.google.com → Billing → Reports → Export',
+  mistral:   'console.mistral.ai → Usage → Export',
+  openrouter:'openrouter.ai → Activity → Export',
+  cohere:    'dashboard.cohere.com → Usage → Export',
+};
+const _pollHandles = {};
+
 async function loadConnect() {
   const [provs, keys] = await Promise.all([
     GET('/api/workspaces/'+wsId+'/providers'),
     GET('/api/workspaces/'+wsId+'/api-keys'),
   ]);
-  const conn = (provs||[]).map(p => p.type);
-  ['anthropic','openai','google','mistral','openrouter','cohere'].forEach(p => {
-    const el = document.querySelector('[onclick="connectProv(\''+p+'\')"]');
-  });
-  document.getElementById('p-list').innerHTML = ['anthropic','openai','google','mistral','openrouter','cohere'].map(p =>
-    '<div class="pc '+(conn.includes(p)?'connected':'')+'" onclick="connectProv(\''+p+'\')">'
-    +'<div class="pcs '+(conn.includes(p)?'connected':'add')+'">'+(conn.includes(p)?'✓ CONNECTED':'+ CONNECT')+'</div>'
-    +'<div class="pcn">'+(p.charAt(0).toUpperCase()+p.slice(1))+'</div></div>'
-  ).join('');
+  renderProviderGrid(provs||[]);
   const ks = keys||[];
   document.getElementById('k-tbody').innerHTML = ks.length
-    ? ks.map(k => '<tr><td class="tn">'+k.name+'</td><td class="tm">'+(k.prefix||'mrd_')+'…</td><td class="td">'+(k.last_used?new Date(k.last_used).toLocaleDateString():'Never')+'</td><td><button class="btn danger" style="font-size:10px">Revoke</button></td></tr>').join('')
+    ? ks.map(k => '<tr><td class="tn">'+k.name+'</td><td class="tm">'+(k.prefix||'mrd_')+'…</td><td class="td">'+(k.last_used?new Date(k.last_used).toLocaleDateString():'Never')+'</td><td><button class="btn danger" style="font-size:10px" onclick="revokeKey(\''+k.id+'\')">Revoke</button></td></tr>').join('')
     : '<tr><td colspan="4" class="td" style="text-align:center;padding:16px">No API keys yet.</td></tr>';
 }
-async function connectProv(t) { const k=prompt('Enter '+t+' API key:'); if(!k) return; await POST('/api/workspaces/'+wsId+'/providers',{type:t,api_key:k}); loadConnect(); }
+
+function renderProviderGrid(provs) {
+  const connMap = {};
+  (provs||[]).forEach(p => { connMap[p.type] = p; });
+  const all = ['anthropic','openai','google','mistral','openrouter','cohere'];
+  document.getElementById('p-list').innerHTML = all.map(pt => {
+    const p = connMap[pt];
+    if (!p) return '<div class="pc" onclick="connectProv(\''+pt+'\')">'
+      +'<div class="pcs add">+ CONNECT</div>'
+      +'<div class="pcn">'+PROVIDER_LABELS[pt]+'</div>'
+      +'<div style="font-family:var(--mono);font-size:9px;color:var(--t4);margin-top:3px">Not connected</div>'
+      +'</div>';
+    const st = p.import_status||'pending';
+    const stLabel = st==='ready'?'✓ VALIDATED':st==='validating'?'VALIDATING…':st==='error'?'KEY ERROR':'CONNECTING…';
+    const stColor = st==='ready'?'var(--green)':st==='error'?'var(--red)':'var(--amber)';
+    const models  = (p.available_models||[]).slice(0,2).join(', ');
+    const txCount = p.transactions_imported||0;
+    return '<div class="pc connected" id="pc-'+p.id+'">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">'
+        +'<div class="pcs connected" style="color:'+stColor+'">'+stLabel+'</div>'
+        +'<div onclick="connectProv(\''+pt+'\')" style="font-family:var(--mono);font-size:9px;color:var(--t4);cursor:pointer">re-key</div>'
+      +'</div>'
+      +'<div class="pcn">'+PROVIDER_LABELS[pt]+'</div>'
+      +(models?'<div style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+models+(((p.available_models||[]).length>2)?'…':'')+'</div>':'')
+      +(txCount>0?'<div style="font-family:var(--mono);font-size:9px;color:var(--green);margin-top:2px">'+txCount.toLocaleString()+' tx imported</div>':'')
+      +(st==='ready'?'<button class="btn" onclick="showImportCsv(\''+p.id+'\',\''+pt+'\')" style="margin-top:7px;font-size:10px;width:100%">Import history CSV</button>':'')
+      +(st==='error'?'<div style="font-family:var(--mono);font-size:9px;color:var(--red);margin-top:3px">'+(p.import_error||'Validation failed')+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+async function connectProv(t) {
+  const k = prompt('Enter '+PROVIDER_LABELS[t]+' API key:');
+  if (!k) return;
+  const r = await POST('/api/workspaces/'+wsId+'/providers', {type:t, api_key:k});
+  if (!r) return;
+  await loadConnect();
+  if (r.provider_id) _startPolling(r.provider_id);
+}
+
+function _startPolling(providerId) {
+  if (_pollHandles[providerId]) return;
+  let attempts = 0;
+  _pollHandles[providerId] = setInterval(async () => {
+    attempts++;
+    const s = await GET('/api/workspaces/'+wsId+'/providers/'+providerId+'/status');
+    if (!s) { clearInterval(_pollHandles[providerId]); return; }
+    const card = document.getElementById('pc-'+providerId);
+    if (card) {
+      const st = s.import_status;
+      const stColor = st==='ready'?'var(--green)':st==='error'?'var(--red)':'var(--amber)';
+      const stLabel = st==='ready'?'✓ VALIDATED':st==='validating'?'VALIDATING…':st==='error'?'KEY ERROR':'CONNECTING…';
+      const badge = card.querySelector('.pcs.connected');
+      if (badge) { badge.textContent = stLabel; badge.style.color = stColor; }
+    }
+    if (s.import_status==='ready'||s.import_status==='error'||attempts>20) {
+      clearInterval(_pollHandles[providerId]); delete _pollHandles[providerId];
+      await loadConnect();
+    }
+  }, 1500);
+}
+
+function showImportCsv(providerId, providerType) {
+  const help = PROVIDER_CSV_HELP[providerType]||'provider dashboard → Usage → Export';
+  showModal('Import usage history — '+PROVIDER_LABELS[providerType],
+    '<div style="font-family:var(--mono);font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.8;padding:10px;background:var(--bg3);border-radius:4px">'
+    +'<strong style="color:var(--t2)">How to get the CSV:</strong><br>'+help+'<br><br>'
+    +'Meridian auto-detects the CSV format. Re-importing is safe — no duplicates created.'
+    +'</div>'
+    +'<div class="mf"><label>Usage CSV file</label>'
+    +'<input id="csv-imp-file" type="file" accept=".csv,.tsv" style="background:var(--bg3);border:1px solid var(--rule2);border-radius:4px;padding:6px;color:var(--t2);width:100%;box-sizing:border-box">'
+    +'</div>'
+    +'<div id="csv-imp-result" style="font-family:var(--mono);font-size:11px;min-height:18px;margin-top:6px"></div>',
+    async () => {
+      const f = document.getElementById('csv-imp-file').files[0];
+      if (!f) { showErr('Select a CSV file'); return; }
+      const res = document.getElementById('csv-imp-result');
+      res.style.color = 'var(--t3)'; res.textContent = 'Importing…';
+      const formData = new FormData(); formData.append('file', f);
+      try {
+        const r = await fetch(API+'/api/workspaces/'+wsId+'/providers/'+providerId+'/import-csv',
+          {method:'POST', headers:{'Authorization':'Bearer '+tok}, body:formData});
+        if (r.status===402) { const e=await r.json().catch(()=>({detail:'Upgrade required'})); showUpgradeModal(e.detail); return; }
+        if (!r.ok) { const e=await r.json().catch(()=>({detail:'Import failed'})); showErr(e.detail||'Import failed'); return; }
+        const d = await r.json();
+        res.style.color='var(--green)'; res.textContent=d.message+(d.skipped>0?' ('+d.skipped+' already imported)':'');
+        setTimeout(() => { document.getElementById('_m')?.remove(); loadConnect(); switchView('spend'); }, 1800);
+      } catch(e) { showErr('Upload failed: '+e.message); }
+    }
+  );
+}
+
+async function revokeKey(keyId) {
+  if (!confirm('Revoke this API key? This cannot be undone.')) return;
+  await fetch(API+'/api/workspaces/'+wsId+'/api-keys/'+keyId,
+    {method:'DELETE', headers:{'Authorization':'Bearer '+tok}});
+  loadConnect();
+}
 async function connectBilling(s) {
   if (s !== 'stripe') return;
   const k = prompt('Enter Stripe secret key (sk_live_... or sk_test_...):'); if (!k) return;
