@@ -3,5 +3,4 @@ WORKDIR /app
 COPY backend/requirementsv8_3_6.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-ENTRYPOINT ["uvicorn", "app:app", "--host", "0.0.0.0"]
-CMD ["--port", "8080"]
+CMD uvicorn app:app --host 0.0.0.0 --port ${PORT:-8080}
